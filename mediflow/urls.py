@@ -16,7 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from mediflowApp import views as mediflowViews
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', mediflowViews.home),
+    path('new-exam/', mediflowViews.new_exam)
 ]
