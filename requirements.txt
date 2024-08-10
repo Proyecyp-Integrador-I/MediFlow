@@ -1,0 +1,8 @@
+asgiref==3.8.1
+defusedxml==0.7.1
+Django==5.1
+fonttools==4.53.1
+fpdf2==2.7.9
+pillow==10.4.0
+sqlparse==0.5.1
+tzdata==2024.1
