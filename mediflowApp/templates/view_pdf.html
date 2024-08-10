@@ -1,8 +1,25 @@
-<h2>Edit File {{ file.id }}</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <label for="result_analysis">Result Analysis:</label>
-    <textarea name="result_analysis" id="result_analysis">{{ file.result_analysis }}</textarea>
-    <button type="submit">Save</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container my-4">
+        <h2 class="mb-4">Edit File {{ file.id }}</h2>
+        <form method="post" class="border p-4 shadow-sm rounded">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="mb-3">
+                <label for="result_analysis" class="form-label">Result Analysis:</label>
+                <textarea name="result_analysis" id="result_analysis" class="form-control" rows="5">{{ file.result_analysis }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS (Optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3
