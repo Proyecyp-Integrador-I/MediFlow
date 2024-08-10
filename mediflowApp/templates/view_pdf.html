@@ -17,9 +17,11 @@
                 <label for="result_analysis" class="form-label">Result Analysis:</label>
                 <textarea name="result_analysis" id="result_analysis" class="form-control" rows="5">{{ file.result_analysis }}</textarea>
             </div>
+            <div>
+                <object data="{{ file.file.url }}" type="application/pdf" width="100%" height="800">
+                    <p>Tu navegador no soporta la visualización del PDF. Puedes descargar el PDF <a href="{{ file.file.url }}">aquí</a>.</p>
+                </object>
+            </div>
             <button type="submit" class="btn btn-primary">Save</button>
         </form>
     </div>
-
-    <!-- Bootstrap JS (Optional) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3
