@@ -17,9 +17,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from mediflowApp import views as mediflowViews
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', mediflowViews.home),
-    path('new-exam/', mediflowViews.new_exam)
+    path('', mediflowViews.home, name="home"),
+    path('new-exam/', mediflowViews.new_exam, name="new_exam"),
+    path('exams/edit/<int:pk>/', mediflowViews.view_pdf, name="view_pdf"),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

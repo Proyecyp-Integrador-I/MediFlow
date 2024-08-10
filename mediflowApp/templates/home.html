@@ -1,0 +1,22 @@
+<a href="/new-exam">NEW EXAM</a>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>File</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for file in files %}
+            <tr>
+                <td>{{ file.id }}</td>
+                <td>{{ file.date }}</td>
+                <td><a href="{{ file.file.url }}">{{ file.file.name }}</a></td>
+                <td><a href="{% url 'view_pdf' file.pk %}">Edit</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

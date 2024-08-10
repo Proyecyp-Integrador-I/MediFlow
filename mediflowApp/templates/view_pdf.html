@@ -1,0 +1,8 @@
+<h2>Edit File {{ file.id }}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <label for="result_analysis">Result Analysis:</label>
+    <textarea name="result_analysis" id="result_analysis">{{ file.result_analysis }}</textarea>
+    <button type="submit">Save</button>
+</form>
