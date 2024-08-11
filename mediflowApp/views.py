@@ -18,19 +18,19 @@ def new_exam(request):
     return render(request, 'new_exam.html', {'form': form})
 
 def view_pdf(request, pk):
-    file = get_object_or_404(Exam, pk=pk)
+    exam = get_object_or_404(Exam, pk=pk)
     if request.method == 'POST':
-        form = UploadFileForm(request.POST, instance=file)
+        form = UploadFileForm(request.POST, instance=exam)
         if form.is_valid():
-            file.result_analysis = request.POST.get('result_analysis')
-            file.is_analyzed = True  # Por ejemplo, marcar como analizado una vez se edite
+            exam.result_analysis = request.POST.get('result_analysis')
+            exam.is_analyzed = True  # Por ejemplo, marcar como analizado una vez se edite
 
             # Crear un PDF con el resultado del análisis
-            generate_analysis_pdf(file)
+            generate_analysis_pdf(exam, f'media/analysis_{exam.id}.pdf')
             
-            file.save()
+            exam.save()
 
             return redirect('home')
     else:
-        form = UploadFileForm(instance=file)
-    return render(request, 'view_pdf.html', {'form': form, 'file': file})
+        form = UploadFileForm(instance=exam)
+    return render(request, 'view_pdf.html', {'form': form, 'file': exam})
