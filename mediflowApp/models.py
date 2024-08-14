@@ -12,7 +12,7 @@ class Patient(models.Model):
     address = models.CharField(max_length=100)
     health_insurance = models.CharField(max_length=50)
 
- 
+
 
 class Ophtalmologist(models.Model):
     id = models.AutoField(primary_key=True)

@@ -22,6 +22,8 @@
                     <p>Tu navegador no soporta la visualización del PDF. Puedes descargar el PDF <a href="{{ file.file.url }}">aquí</a>.</p>
                 </object>
             </div>
-            <button type="submit" class="btn btn-primary">Save</button>
+            {% for file in uploaded_files %}
+                <a href="{% url 'download_file' file.id %}" class="btn btn-primary">Save</a>
+            {% endfor %}
         </form>
     </div>
