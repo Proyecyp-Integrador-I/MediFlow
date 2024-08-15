@@ -8,4 +8,4 @@ class UploadFileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(UploadFileForm, self).__init__(*args, **kwargs)
-        self.fields['file'].widget.attrs.update({'accept': 'application/pdf'})  # Aceptar solo PDFs
+        self.fields['file'].widget.attrs.update({'accept': 'application/pdf'})  # Accept only PDFs

@@ -25,6 +25,7 @@ urlpatterns = [
     path('', mediflowViews.home, name="home"),
     path('new-exam/', mediflowViews.new_exam, name="new_exam"),
     path('exams/edit/<int:pk>/', mediflowViews.view_pdf, name="view_pdf"),
+    path('exam/download/<int:path>', mediflowViews.download, name="download")
 ]
 
 if settings.DEBUG:
