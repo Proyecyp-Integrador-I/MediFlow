@@ -2,7 +2,7 @@ from fpdf import FPDF
 import pypdfium2 as pdfium
 from mediflowApp.models import Ophtalmologist, Patient, Exam
 
-def generate_analysis_pdf(exam, output_file, doctor=Ophtalmologist(name="John", last_name="Doe", email="johndoe@example.com", medical_license="1234567890", title="Ophthalmologist", address="123 Main St"), patient = Patient(name='Pepito', last_name='Perez', email='eldestrozador@example.com', phone='1234567890', age=30, date_of_birth='1990-01-01', gender='M', address='123 Main St', health_insurance='ABC Insurance'), logo="media/logo_clinica.png"):
+def generate_analysis_pdf(exam, patient, output_file, doctor=Ophtalmologist(name="John", last_name="Doe", email="johndoe@example.com", medical_license="1234567890", title="Ophthalmologist", address="123 Main St"), logo="media/logo_clinica.png"):
     class PDF(FPDF):
         def header(self):
             self.image(logo, 10, 8, 33)
@@ -36,7 +36,7 @@ def generate_analysis_pdf(exam, output_file, doctor=Ophtalmologist(name="John", 
     # Examination Device
     pdf.add_page()
     pdf.cell(150)
-    #pdf.cell(0,20, text=f"{exam.apparatus}", align="R")
+    pdf.cell(0,20, text=f"{exam.apparatus}", align="R")
     pdf.ln(20)
 
     # Style line
@@ -44,7 +44,7 @@ def generate_analysis_pdf(exam, output_file, doctor=Ophtalmologist(name="John", 
 
     # Patient name and health provider
     pdf.cell(30)
-    pdf.cell(text=f"PACIENTE: {patient.name}",align="L")
+    pdf.cell(text=f"PACIENTE: {patient.name} {patient.last_name}",align="L")
     pdf.cell(60)
     pdf.cell(text=f"{patient.health_insurance}", align="R")
     pdf.ln(5)
@@ -55,7 +55,7 @@ def generate_analysis_pdf(exam, output_file, doctor=Ophtalmologist(name="John", 
     pdf.cell(20)
     pdf.cell( text=f"EDAD: {patient.age} años", align="L")
     pdf.cell(20)
-    pdf.cell(text=f"{patient.id}", align="R")
+    pdf.cell(text=f"{patient.identification}", align="R")
     pdf.ln(20)
 
     # Style line
@@ -87,10 +87,20 @@ def generate_analysis_pdf(exam, output_file, doctor=Ophtalmologist(name="John", 
     pdf.ln(5)
     pdf.cell(w=0, text=doctor.title, align="L")
 
+    # Images of the examination
+    exam_file = exam.file
+    image_pdf = pdfium.PdfDocument(exam_file)
+    for i in range(0, len(image_pdf)):
+        page = image_pdf[i]
+        image = page.render(scale=4).to_pil()
+
+        pdf.add_page()
+        pdf.image(image, x = 0, y = 30, w=200)
+
     pdf.output(output_file)
+
     return {"status": "success", "message": "PDF created successfully"}
 
-    # Images of the examination
 """     exams = exam.exam_files
     for exam_idx in range(len(exams)):
         print(f"Adding exam {exams[exam_idx]}")

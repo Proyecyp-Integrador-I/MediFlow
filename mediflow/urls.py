@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', mediflowViews.home, name="home"),
     path('new-exam/', mediflowViews.new_exam, name="new_exam"),
+    path('new-patient/', mediflowViews.new_patient, name="new_patient"),
     path('exams/edit/<int:pk>/', mediflowViews.view_pdf, name="view_pdf"),
     path('exam/download/<int:path>', mediflowViews.download, name="download")
 ]
