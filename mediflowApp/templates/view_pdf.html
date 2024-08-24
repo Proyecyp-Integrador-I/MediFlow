@@ -17,7 +17,9 @@
                 {% csrf_token %}
                 {{ form.as_p }}
                 <div class="mb-3">
-                    <label for="result_analysis" class="form-label">Result Analysis:</label>
+                    <p>Currently analyzing the exam of {{ file.patient.name }} {{ file.patient.last_name }}, {{ file.patient.identification }}</p>
+
+                    <label for="result_analysis" class="form-label"><h3>Result Analysis:</h3></label>
                     <textarea name="result_analysis" id="result_analysis" class="form-control" rows="5">{{ file.result_analysis }}</textarea>
                 </div>
                 <div>
@@ -27,6 +29,11 @@
                 </div>
                 <button type="submit" class="btn btn-success">Save</button>
                 <a href="{% url 'download' file.id %}" class="btn btn-secondary" target="_blank">Download file</a>
+                <!-- <a href="{% url 'next_exam' %}" class="btn btn-primary" target="_blank">Next Exam</a> -->
+            </form>
+            <form action="{% url 'next_exam' %}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-success" type="submit">Next Exam</button>
             </form>
         </div>
     </body>
