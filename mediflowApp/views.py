@@ -4,6 +4,7 @@ from .forms import Exam, Patient
 from .generate_analysis import generate_analysis_pdf
 from django.conf import settings
 import os
+import pandas as pd
 
 def home(request):
     files = Exam.objects.all() # Filter by user
@@ -29,10 +30,42 @@ def new_patient(request):
         form = AddPatientForm()
     return render(request, 'new_patient.html', {'form': form})
 
-def download(request, path):
-    #generate_analysis_pdf(exam, patient, f'media/analysis_{exam.id}.pdf')
-    #file_path = os.path.join(settings.MEDIA_ROOT, f'analysis_{path}.pdf')
+def automated_patient_extraction(request):
+    if request.method == 'POST':
+        try:
+            patient_list = request.FILES.get('patient_list')
+            df = pd.read_excel(patient_list)
+            
+            df.columns = df.columns.str.strip()
+            for index, row in df.iterrows():
+                print(index)
+                existing_patient = Patient.objects.filter(identification=row['Identificación']).exists()
+                if not existing_patient:
+                    patient = Patient(
+                        name=row['Nombre del paciente'],
+                        last_name="",
+                        identification=row['Identificación'],
+                        age=row['Edad'],
+                        health_insurance=row['Entidad'])
+                    patient.save()
+        except Exception as e:
+            return render(request, 'automated_extraction.html', {'error': "Error al procesar el archivo"})
 
+        return redirect("home") # Redirigir a una página de éxito
+    else:
+        return render(request, 'automated_extraction.html', {'error': ""})
+
+def multiple_exams(request):
+    if request.method == 'POST':
+        patient_list = request.FILES.get('patient_list')
+        if form.is_valid():
+            form.save()
+            return redirect("home") # Redirigir a una página de éxito
+    else:
+        form = UploadExamForm()
+    return render(request, 'multiple_exams.html')
+
+def download(request, path):
     exam = get_object_or_404(Exam, pk=path)
     exam.result_analysis = exam.result_analysis
     exam.is_analyzed = True
@@ -75,12 +108,17 @@ def next_exam(request):
 
 def view_pdf(request, pk):
     exam = get_object_or_404(Exam, pk=pk)
+    default_analysis = ''
+    if exam.exam_type == '' and exam.is_analyzed == True: 
+        default_analysis = 'Esta bien'
+        
     if request.method == 'POST':
         form = UploadFileForm(request.POST, instance=exam)
         if form.is_valid():
             exam.result_analysis = request.POST.get('result_analysis')
-            exam.is_analyzed = True  # Por ejemplo, marcar como analizado una vez se edite
             patient = exam.patient
+
+            exam.is_analyzed = True  # Por ejemplo, marcar como analizado una vez se edite
             # Crear un PDF con el resultado del análisis
             pdf_path = f'media/{exam.exam_type}_{patient.name}_{patient.last_name}.pdf'
             generate_analysis_pdf(exam, patient, pdf_path)
@@ -93,4 +131,4 @@ def view_pdf(request, pk):
             return redirect('download', path=pk)
     else:
         form = UploadFileForm(instance=exam)
-    return render(request, 'view_pdf.html', {'form': form, 'file': exam})
+    return render(request, 'view_pdf.html', {'form': form, 'file': exam, 'default_analysis': default_analysis})

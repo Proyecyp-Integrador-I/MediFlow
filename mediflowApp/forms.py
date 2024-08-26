@@ -15,12 +15,13 @@ class UploadExamForm(forms.ModelForm):
         model = Exam
         fields = ['file', 'date', 'apparatus', 'exam_type', 'patient']
         widgets = {
-            'date': forms.DateInput(attrs={'type': 'date'}),
+            'date': forms.DateInput(attrs={'type': 'date'})
         }
 
     def __init__(self, *args, **kwargs):
         super(UploadExamForm, self).__init__(*args, **kwargs)
-        self.fields['file'].widget.attrs.update({'accept': 'application/pdf'})  # Accept only PDFs
+        self.fields['file'].widget.attrs.update({'accept': 'application/pdf', 
+            'multiple': True })  # Accept only PDFs
 
 class AddPatientForm(forms.ModelForm):
     class Meta:

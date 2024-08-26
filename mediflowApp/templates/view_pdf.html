@@ -20,7 +20,7 @@
                     <p>Currently analyzing the exam of {{ file.patient.name }} {{ file.patient.last_name }}, {{ file.patient.identification }}</p>
 
                     <label for="result_analysis" class="form-label"><h3>Result Analysis:</h3></label>
-                    <textarea name="result_analysis" id="result_analysis" class="form-control" rows="5">{{ file.result_analysis }}</textarea>
+                    <textarea name="result_analysis" id="result_analysis" class="form-control" rows="5">{{ default_analysis }}{{ file.result_analysis }}</textarea>
                 </div>
                 <div>
                     <object data="{{ file.file.url }}" type="application/pdf" width="100%" height="800">
