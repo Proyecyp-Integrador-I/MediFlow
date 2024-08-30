@@ -109,9 +109,24 @@ def next_exam(request):
 def view_pdf(request, pk):
     exam = get_object_or_404(Exam, pk=pk)
     default_analysis = ''
-    if exam.exam_type == '' and exam.is_analyzed == True: 
-        default_analysis = 'Esta bien'
-        
+    if exam.exam_type.lower() == 'nervio óptico' and exam.is_analyzed == True: 
+        default_analysis = '''CONCLUSIONES 
+
+                            1.	Examen con buena confiabilidad en AO. 
+                            2.	Ambos nervios ópticos son normales con excavación aumentada AO.
+                            3.	Grosor normal en la capa de fibras nerviosas en AO con buena simetría AO.  
+                            4.	Grosor normal en la capa de células ganglionares AO. 
+                            5.	Se recomienda hacer correlación con el cuadro clínico del paciente y con otras ayudas diagnósticas.
+                        '''
+    if exam.exam_type.lower() == 'segmento anterior' and exam.is_analyzed == True: 
+        default_analysis = '''CONCLUSIONES 
+
+                            1.	Examen con buena confiabilidad en AO. 
+                            2.	Ambos nervios ópticos son normales con excavación aumentada AO.
+                            3.	Grosor normal en la capa de fibras nerviosas en AO con buena simetría AO.  
+                            4.	Grosor normal en la capa de células ganglionares AO. 
+                            5.	Se recomienda hacer correlación con el cuadro clínico del paciente y con otras ayudas diagnósticas.
+                        '''
     if request.method == 'POST':
         form = UploadFileForm(request.POST, instance=exam)
         if form.is_valid():
