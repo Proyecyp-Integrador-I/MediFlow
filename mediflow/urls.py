@@ -30,6 +30,7 @@ urlpatterns = [
     path('exam/next_exam/', mediflowViews.next_exam, name="next_exam"),
     path('patient-extraction/', mediflowViews.automated_patient_extraction, name="patient_extraction"),
     path('administrator/', mediflowViews.administrator, name="administrator"),
+    path('new-ophthalmologist/', mediflowViews.new_ophthalmologist, name="new_ophthalmologist"),
 ]
 
 if settings.DEBUG:

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
-from .forms import UploadFileForm, UploadExamForm, AddPatientForm # Importación de los formularios
-from .forms import Exam, Patient
+from .forms import UploadFileForm, UploadExamForm, AddPatientForm, AddOphthalmologistForm # Importación de los formularios
+from .forms import Exam, Patient, Ophthalmologist
 from .generate_analysis import generate_analysis_pdf
 from django.conf import settings
 import os
@@ -149,5 +149,16 @@ def view_pdf(request, pk):
     return render(request, 'view_pdf.html', {'form': form, 'file': exam, 'default_analysis': default_analysis})
     
 def administrator(request):
-    return render(request, 'administrator.html')
+    files = Exam.objects.all() # Filter by user
+    doctors = Ophthalmologist.objects.all()
+    return render(request, 'administrator.html', {'files': files, 'doctors': doctors})
 
+def new_ophthalmologist(request):
+    if request.method == 'POST':
+        form = AddOphthalmologistForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("home") # Redirigir a una página de éxito
+    else:
+        form = AddOphthalmologistForm()
+    return render(request, 'new_ophthalmologist.html', {'form': form})

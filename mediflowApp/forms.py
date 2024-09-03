@@ -1,5 +1,5 @@
 from django import forms
-from .models import Exam, Patient
+from .models import Exam, Patient, Ophthalmologist
 
 class UploadFileForm(forms.ModelForm):
     class Meta:
@@ -32,3 +32,10 @@ class AddPatientForm(forms.ModelForm):
         }
     def __init__(self, *args, **kwargs):
         super(AddPatientForm, self).__init__(*args, **kwargs)
+
+class AddOphthalmologistForm(forms.ModelForm):
+    class Meta:
+        model = Ophthalmologist
+        fields = ['id', 'name', 'last_name', 'email', 'medical_license', 'specialty', 'address']
+    def __init__(self, *args, **kwargs):
+        super(AddOphthalmologistForm, self).__init__(*args, **kwargs)

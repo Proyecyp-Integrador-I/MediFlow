@@ -1,8 +1,8 @@
 from fpdf import FPDF
 import pypdfium2 as pdfium
-from mediflowApp.models import Ophtalmologist, Patient, Exam
+from mediflowApp.models import Ophthalmologist, Patient, Exam
 
-def generate_analysis_pdf(exam, patient, output_file, doctor=Ophtalmologist(name="Martha Luz", last_name="Zuluaga Posada", email="johndoe@example.com", medical_license="RM-5-1382-97", title="Oftalmólogo y Corneólogo CES", address="123 Main St"), logo="media/logo_clinica.png"):
+def generate_analysis_pdf(exam, patient, output_file, doctor=Ophthalmologist(name="Martha Luz", last_name="Zuluaga Posada", email="johndoe@example.com", medical_license="RM-5-1382-97", specialty="Oftalmólogo y Corneólogo CES", address="123 Main St"), logo="media/logo_clinica.png"):
     class PDF(FPDF):
         def header(self):
             self.image(logo, 10, 8, 33)
@@ -85,7 +85,7 @@ def generate_analysis_pdf(exam, patient, output_file, doctor=Ophtalmologist(name
     pdf.ln(5)
     pdf.cell(w=0, text=doctor.medical_license, align="L")
     pdf.ln(5)
-    pdf.cell(w=0, text=doctor.title, align="L")
+    pdf.cell(w=0, text=doctor.specialty, align="L")
 
     # Images of the examination
     exam_file = exam.file

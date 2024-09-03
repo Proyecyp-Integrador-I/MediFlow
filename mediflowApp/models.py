@@ -16,13 +16,13 @@ class Patient(models.Model):
     def __str__(self):
         return f"{self.name} {self.last_name} {self.identification}"
 
-class Ophtalmologist(models.Model):
+class Ophthalmologist(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     email = models.EmailField()
     medical_license = models.CharField(max_length=50)
-    title = models.CharField(max_length=50)
+    specialty = models.CharField(max_length=50)
     address = models.CharField(max_length=100)
 
 class Exam(models.Model):
