@@ -147,3 +147,7 @@ def view_pdf(request, pk):
     else:
         form = UploadFileForm(instance=exam)
     return render(request, 'view_pdf.html', {'form': form, 'file': exam, 'default_analysis': default_analysis})
+    
+def administrator(request):
+    return render(request, 'administrator.html')
+
