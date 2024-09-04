@@ -5,6 +5,8 @@ from .forms import Exam, Patient
 from mediflowApp.utils.generate_analysis import generate_analysis_pdf
 from django.conf import settings
 from mediflowApp.utils.send_email import send_email
+from PyPDF2 import PdfReader, PdfWriter
+
 
 import os
 import pandas as pd
@@ -173,3 +175,15 @@ def email_view(request, pk):
             return redirect('view_pdf', pk=pk)
     else:
         return redirect('view_pdf', pk=pk)
+
+def add_password(request, output_file, password):
+    reader = PdfReader(request)
+    writer = PdfWriter()
+
+    for page in reader.pages:
+        writer.add_page(page)
+
+    writer.encrypt(password)
+
+    with open(output_file, 'wb') as output_file:
+        writer.write(output_file)
