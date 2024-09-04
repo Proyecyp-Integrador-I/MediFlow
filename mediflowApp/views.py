@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
+from django.contrib import messages
 from .forms import UploadFileForm, UploadExamForm, AddPatientForm # Importación de los formularios
 from .forms import Exam, Patient
-from .generate_analysis import generate_analysis_pdf
+from mediflowApp.utils.generate_analysis import generate_analysis_pdf
 from django.conf import settings
+from mediflowApp.utils.send_email import send_email
+
 import os
 import pandas as pd
 
@@ -35,7 +38,7 @@ def automated_patient_extraction(request):
         try:
             patient_list = request.FILES.get('patient_list')
             df = pd.read_excel(patient_list)
-            
+
             df.columns = df.columns.str.strip()
             for index, row in df.iterrows():
                 print(index)
@@ -78,8 +81,6 @@ def download(request, path):
         response = HttpResponse(fh.read(), content_type="applicaction/pdf")
         response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
         return response
-
-
 
 
 """     if not os.path.exists(file_path):
@@ -137,6 +138,7 @@ def view_pdf(request, pk):
             # Crear un PDF con el resultado del análisis
             pdf_path = f'media/{exam.exam_type}_{patient.name}_{patient.last_name}.pdf'
             generate_analysis_pdf(exam, patient, pdf_path)
+            #exam.analyzed_path
 
             exam.save()
             """ response = HttpResponse(fh.read(), content_type="applicaction/pdf")
@@ -147,3 +149,27 @@ def view_pdf(request, pk):
     else:
         form = UploadFileForm(instance=exam)
     return render(request, 'view_pdf.html', {'form': form, 'file': exam, 'default_analysis': default_analysis})
+
+def email_view(request, pk):
+    exam = get_object_or_404(Exam, pk=pk)
+    patient = exam.patient
+    if request.method == 'POST':
+        recipient = patient.email
+        user_id = 1 # Hardcoded, cambiar a perfil del doctor
+        subject = f'Resultado de OCT {exam.exam_type} - {patient.name} {patient.last_name}' # Cambiar a datos de la clinica
+        body = '''Buenos días,
+                  Adjunto encontrará el resultado de su examen de OCT.
+
+                    Saludos cordiales,
+                    [Nombre de la clínica]
+                '''
+        attachment_path = f'media/{exam.exam_type}_{patient.name}_{patient.last_name}.pdf'
+        result = send_email(user_id, recipient, subject, body, attachment_path)
+        if result["status"] == "success":
+            messages.success(request, f'Email enviado exitosamente a {recipient}')
+            return redirect('view_pdf', pk=pk)
+        else:
+            messages.warning(request, f'Error al enviar el email a {recipient}: {result["message"]}')
+            return redirect('view_pdf', pk=pk)
+    else:
+        return redirect('view_pdf', pk=pk)

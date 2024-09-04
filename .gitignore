@@ -4,3 +4,4 @@ mediflowApp/migrations/0003_remove_exam_patient.py
 venv/
 db.sqlite3
 media/
+google_auth/

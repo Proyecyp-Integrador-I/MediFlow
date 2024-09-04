@@ -28,6 +28,7 @@ urlpatterns = [
     path('exams/edit/<int:pk>/', mediflowViews.view_pdf, name="view_pdf"),
     path('exam/download/<int:path>', mediflowViews.download, name="download"),
     path('exam/next_exam/', mediflowViews.next_exam, name="next_exam"),
+    path('exam/send_exam/<int:pk>', mediflowViews.email_view, name="send_exam"),
     path('patient-extraction/', mediflowViews.automated_patient_extraction, name="patient_extraction"),
 ]
 
