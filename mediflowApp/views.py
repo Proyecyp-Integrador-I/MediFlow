@@ -77,12 +77,29 @@ def download(request, path):
     patient = exam.patient
     file_path = f'media/{exam.exam_type}_{patient.name}_{patient.last_name}.pdf'
     generate_analysis_pdf(exam, patient, file_path)
+
+    password = 12345
+    protected_file_path = f'media/protected_{exam.exam_type}_{patient.name}_{patient.last_name}.pdf'
+    add_password_to_pdf(file_path, protected_file_path, password)
+
     exam.save()
 
     with open(file_path, "rb") as fh:
         response = HttpResponse(fh.read(), content_type="applicaction/pdf")
         response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
         return response
+
+def add_password_to_pdf(input_pdf, output_pdf, password):
+    reader = PdfReader(input_pdf)
+    writer = PdfWriter()
+
+    for page in reader.pages:
+        writer.add_page(page)
+
+    writer.encrypt(password)
+
+    with open(output_pdf, 'wb') as output_file:
+        writer.write(output_file)
 
 
 """     if not os.path.exists(file_path):
@@ -175,15 +192,3 @@ def email_view(request, pk):
             return redirect('view_pdf', pk=pk)
     else:
         return redirect('view_pdf', pk=pk)
-
-def add_password(request, output_file, password):
-    reader = PdfReader(request)
-    writer = PdfWriter()
-
-    for page in reader.pages:
-        writer.add_page(page)
-
-    writer.encrypt(password)
-
-    with open(output_file, 'wb') as output_file:
-        writer.write(output_file)
