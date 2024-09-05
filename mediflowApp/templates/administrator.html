@@ -17,69 +17,114 @@
             <a href="{% url 'new_patient' %}" class="btn btn-success">Add Patient</a>
             <a href="{% url 'patient_extraction' %}" class="btn btn-success">Automated Patient Extraction</a>
             <a href="{% url 'new_ophthalmologist' %}" class="btn btn-success">Add Ophthalmologist</a>
+            <a href="{% url 'delete_patient' %}" class="btn btn-success" style="background-color: #b11212; border-color: #a01313;">Delete Patient</a>
+            <a href="{% url 'delete_ophthalmologist' %}" class="btn btn-success" style="background-color: #b11212; border-color: #a01313;">Delete Ophthalmologist</a>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <thead class="table-dark">
-                    <tr>
-                        <th>🧑Patient's name</th>
-                        <th>🧑Patient's ID</th>
-                        <th>📅Date of examination</th>
-                        <th>File</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for file in files %}
-                        <tr>
-                            <td>{{ file.patient.name }} {{ file.patient.last_name }}</td>
-                            <td>{{ file.patient.identification }}</td>
-                            <td>{{ file.date }}</td>
-                            <td><a target="_blank" href="{{ file.file.url }}" class="btn btn-link"><svg class="w-[48px] h-[48px] text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M5 17v-5h1.5a1.5 1.5 0 1 1 0 3H5m12 2v-5h2m-2 3h2M5 10V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1v6M5 19v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1M10 3v4a1 1 0 0 1-1 1H5m6 4v5h1.375A1.627 1.627 0 0 0 14 15.375v-1.75A1.627 1.627 0 0 0 12.375 12H11Z"/>
-                              </svg>
-                              </a></td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+         <!-- Nav tabs -->
+         <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="ophthalmologists-tab" data-bs-toggle="tab" data-bs-target="#ophthalmologists" type="button" role="tab" aria-controls="ophthalmologists" aria-selected="true">Ophthalmologists</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="patients-tab" data-bs-toggle="tab" data-bs-target="#patients" type="button" role="tab" aria-controls="patients" aria-selected="false">Patients</button>
+            </li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <!-- Ophthalmologists Table -->
+            <div class="tab-pane fade show active" id="ophthalmologists" role="tabpanel" aria-labelledby="ophthalmologists-tab">
+                <div class="table-responsive mt-3">
+                    <table class="table table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>🩺Doctor's name</th>
+                                <th>🩺Doctor's medical license</th>
+                                <th>🩺Doctor's specialty</th>
+                                <th>🩺Doctor's email</th>
+                                <th>✏️Edit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for doctor in doctors %}
+                            <tr>
+                                <td>{{ doctor.name }} {{ doctor.last_name }}</td>
+                                <td>{{ doctor.medical_license }}</td>
+                                <td>{{ doctor.specialty }}</td>
+                                <td>{{ doctor.email }}</td>
+                                <td>
+                                    <a href="{% url 'edit_ophthalmologist' doctor.medical_license %}" style="text-decoration: none;">✏️</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Patients Table -->
+            <div class="tab-pane fade" id="patients" role="tabpanel" aria-labelledby="patients-tab">
+                <div class="table-responsive mt-3">
+                    <table class="table table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>🧑Patient's name</th>
+                                <th>🧑Patient's ID</th>
+                                <th>📅Date of examination</th>
+                                <th>File</th>
+                                <th>✏️Edit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for patient in patients %}
+                            <tr>
+                                <td>{{ patient.name }} {{ patient.last_name }}</td>
+                                <td>{{ patient.identification }}</td>
+
+                                {% with file=None %}
+                                    {% for f in files %}
+                                        {% if f.patient.identification == patient.identification %}
+                                            {% with file=f %}{% endwith %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endwith %}
+                                
+                                {% if file %}
+                                    <td>{{ file.date }}</td>
+                                    <td>
+                                        <a target="_blank" href="{{ file.file.url }}" class="btn btn-link">
+                                            <svg class="w-[48px] h-[48px] text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M5 17v-5h1.5a1.5 1.5 0 1 1 0 3H5m12 2v-5h2m-2 3h2M5 10V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1v6M5 19v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1M10 3v4a1 1 0 0 1-1 1H5m6 4v5h1.375A1.627 1.627 0 0 0 14 15.375v-1.75A1.627 1.627 0 0 0 12.375 12H11Z" />
+                                            </svg>
+                                        </a>
+                                    </td>
+                                {% else %}
+                                    <td></td>
+                                    <td></td>
+                                {% endif %}
+                                <td>
+                                    <a href="{% url 'edit_patient' patient.identification %}" style="text-decoration: none;">✏️</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <thead class="table-dark">
-                    <tr>
-                        <th>🩺Doctor's name</th>
-                        <th>🩺Doctor's medical license</th>
-                        <th>🩺Doctor's specialty</th>
-                        <th>🩺Doctor's email</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for doctor in doctors %}
-                        <tr>
-                            <td>{{ doctor.name }} {{ doctor.last_name }}</td>
-                            <td>{{ doctor.medical_license }}</td>
-                            <td>{{ doctor.specialty }}</td>
-                            <td>{{ doctor.email }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-      <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var modalElement = document.getElementById('modalPatient');
-            var modal = new bootstrap.Modal(modalElement);
-
-            modalElement.addEventListener('hidden.bs.modal', function () {
-                // Restablecer el valor del select
-                var selectElement = document.getElementById('patientGender');
-                selectElement.selectedIndex = 0; // Restablece la selección al primer elemento (marcador de posición)
-            });
-        });
-    </script>
+        <!--Bootstrap-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

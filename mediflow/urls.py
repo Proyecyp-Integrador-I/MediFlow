@@ -31,6 +31,10 @@ urlpatterns = [
     path('patient-extraction/', mediflowViews.automated_patient_extraction, name="patient_extraction"),
     path('administrator/', mediflowViews.administrator, name="administrator"),
     path('new-ophthalmologist/', mediflowViews.new_ophthalmologist, name="new_ophthalmologist"),
+    path('delete-ophthalmologist/', mediflowViews.delete_ophthalmologist, name="delete_ophthalmologist"),
+    path('delete-patient/', mediflowViews.delete_patient, name="delete_patient"),
+    path('edit-ophthalmologist/<str:medical_license>/', mediflowViews.edit_ophthalmologist, name="edit_ophthalmologist"),
+    path('edit-patient/<str:identification>', mediflowViews.edit_patient, name="edit_patient"),
 ]
 
 if settings.DEBUG:

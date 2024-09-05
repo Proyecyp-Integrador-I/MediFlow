@@ -23,7 +23,6 @@ class Ophthalmologist(models.Model):
     email = models.EmailField()
     medical_license = models.CharField(max_length=50)
     specialty = models.CharField(max_length=50)
-    address = models.CharField(max_length=100)
 
 class Exam(models.Model):
     id = models.AutoField(primary_key=True)
