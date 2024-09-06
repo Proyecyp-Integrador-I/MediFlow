@@ -53,7 +53,7 @@
                                 <th>🩺Doctor's medical license</th>
                                 <th>🩺Doctor's specialty</th>
                                 <th>🩺Doctor's email</th>
-                                <th>✏️Edit</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -66,6 +66,9 @@
                                 <td>
                                     <a href="{% url 'edit_ophthalmologist' doctor.medical_license %}" style="text-decoration: none;">✏️</a>
                                 </td>
+                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-doctor-id="{{ doctor.id }}">
+                                    🗑️
+                                </button>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -83,7 +86,7 @@
                                 <th>🧑Patient's ID</th>
                                 <th>📅Date of examination</th>
                                 <th>File</th>
-                                <th>✏️Edit</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>

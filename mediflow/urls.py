@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from mediflowApp import views as mediflowViews
+from administrator import views as adminViews
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -29,12 +30,12 @@ urlpatterns = [
     path('exam/download/<int:path>', mediflowViews.download, name="download"),
     path('exam/next_exam/', mediflowViews.next_exam, name="next_exam"),
     path('patient-extraction/', mediflowViews.automated_patient_extraction, name="patient_extraction"),
-    path('administrator/', mediflowViews.administrator, name="administrator"),
-    path('new-ophthalmologist/', mediflowViews.new_ophthalmologist, name="new_ophthalmologist"),
-    path('delete-ophthalmologist/', mediflowViews.delete_ophthalmologist, name="delete_ophthalmologist"),
-    path('delete-patient/', mediflowViews.delete_patient, name="delete_patient"),
-    path('edit-ophthalmologist/<str:medical_license>/', mediflowViews.edit_ophthalmologist, name="edit_ophthalmologist"),
-    path('edit-patient/<str:identification>', mediflowViews.edit_patient, name="edit_patient"),
+    path('administrator/', adminViews.administrator, name="administrator"),
+    path('new-ophthalmologist/', adminViews.new_ophthalmologist, name="new_ophthalmologist"),
+    path('delete-ophthalmologist/', adminViews.delete_ophthalmologist, name="delete_ophthalmologist"),
+    path('delete-patient/', adminViews.delete_patient, name="delete_patient"),
+    path('edit-ophthalmologist/<str:medical_license>/', adminViews.edit_ophthalmologist, name="edit_ophthalmologist"),
+    path('edit-patient/<str:identification>', adminViews.edit_patient, name="edit_patient"),
 ]
 
 if settings.DEBUG:
