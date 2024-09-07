@@ -23,39 +23,29 @@ def new_ophthalmologist(request):
         form = AddOphthalmologistForm()
     return render(request, 'new_ophthalmologist.html', {'form': form})
 
-def delete_ophthalmologist(request):
+def delete_ophthalmologist(request, medical_license):
     if request.method == 'POST':
-        form = DeleteOphthalmologistForm(request.POST)
-        if form.is_valid():
-            medical_license = form.cleaned_data['medical_license']
-            ophthalmologist = Ophthalmologist.objects.filter(medical_license=medical_license).first()
-            if ophthalmologist:
-                ophthalmologist.delete()
-                messages.success(request, f'Ophthalmologist with medical license {medical_license} deleted successfully!')
-            else:
-                messages.error(request, f'Ophthalmologist with medical license {medical_license} not found.')
-            return redirect('administrator')
-    else:
-        form = DeleteOphthalmologistForm()
+        ophthalmologist = Ophthalmologist.objects.filter(medical_license=medical_license).first()
+        if ophthalmologist:
+            ophthalmologist.delete()
+            messages.success(request, f'Ophthalmologist with medical license {medical_license} deleted successfully!')
+        else:
+            messages.error(request, f'Ophthalmologist with medical license {medical_license} not found.')
+        return redirect('administrator')
 
-    return render(request, 'delete_ophthalmologist.html', {'form': form})
+    return redirect('administrator')
 
-def delete_patient(request):
+def delete_patient(request, identification):
     if request.method == 'POST':
-        form = DeletePatientForm(request.POST)
-        if form.is_valid():
-            identification = form.cleaned_data['identification']
-            patient = Patient.objects.filter(identification=identification).first()
-            if patient:
-                patient.delete()
-                messages.success(request, f'Patient with ID {identification} deleted successfully!')
-            else:
-                messages.error(request, f'Patient with ID {identification} not found.')
-            return redirect('administrator')
-    else:
-        form = DeletePatientForm()
+        patient = Patient.objects.filter(identification=identification).first()
+        if patient:
+            patient.delete()
+            messages.success(request, f'Patient with ID {identification} deleted successfully!')
+        else:
+            messages.error(request, f'Patient with ID {identification} not found.')
+        return redirect('administrator')
 
-    return render(request, 'delete_patient.html', {'form': form})
+    return redirect('administrator')
 
 def edit_ophthalmologist(request, medical_license):
     doctor = get_object_or_404(Ophthalmologist, medical_license=medical_license)

@@ -17,8 +17,6 @@
             <a href="{% url 'new_patient' %}" class="btn btn-success">Add Patient</a>
             <a href="{% url 'patient_extraction' %}" class="btn btn-success">Automated Patient Extraction</a>
             <a href="{% url 'new_ophthalmologist' %}" class="btn btn-success">Add Ophthalmologist</a>
-            <a href="{% url 'delete_patient' %}" class="btn btn-success" style="background-color: #b11212; border-color: #a01313;">Delete Patient</a>
-            <a href="{% url 'delete_ophthalmologist' %}" class="btn btn-success" style="background-color: #b11212; border-color: #a01313;">Delete Ophthalmologist</a>
         </div>
 
         {% if messages %}
@@ -64,11 +62,34 @@
                                 <td>{{ doctor.specialty }}</td>
                                 <td>{{ doctor.email }}</td>
                                 <td>
-                                    <a href="{% url 'edit_ophthalmologist' doctor.medical_license %}" style="text-decoration: none;">✏️</a>
+                                    <a href="{% url 'edit_ophthalmologist' doctor.medical_license %}" class="btn btn-warning btn-sm">
+                                        ✏️
+                                    </a>
+                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteOphthalmologistModal" data-doctor-id="{{ doctor.medical_license }}">
+                                        🗑️
+                                    </button>
+
+                                    <div class="modal fade" id="confirmDeleteOphthalmologistModal" tabindex="-1" aria-labelledby="confirmDeleteOphthalmologistModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="confirmDeleteOphthalmologistModalLabel">Confirm Deletion</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete the ophthalmologist {{ doctor.name }} {{ doctor.last_name }} with medical license {{ doctor.medical_license }}?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <form method="post" action="{% url 'delete_ophthalmologist' doctor.medical_license %}">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-danger">Confirm</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </td>
-                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-doctor-id="{{ doctor.id }}">
-                                    🗑️
-                                </button>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -117,7 +138,34 @@
                                     <td></td>
                                 {% endif %}
                                 <td>
-                                    <a href="{% url 'edit_patient' patient.identification %}" style="text-decoration: none;">✏️</a>
+                                    <a href="{% url 'edit_patient' patient.identification %}" class="btn btn-warning btn-sm">
+                                        ✏️
+                                    </a>
+
+                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeletePatientModal" data-patient-id="{{ patient.identification }}">
+                                        🗑️
+                                    </button>
+
+                                    <div class="modal fade" id="confirmDeletePatientModal" tabindex="-1" aria-labelledby="confirmDeletePatientModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="confirmDeletePatientModalLabel">Confirm Deletion</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete the patient {{ patient.name }} {{ patient.last_name }} with ID {{ patient.identification }}?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <form method="post" action="{% url 'delete_patient' patient.identification %}">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-danger">Confirm</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                             {% endfor %}

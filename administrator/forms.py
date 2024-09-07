@@ -20,13 +20,3 @@ class EditPatientForm(forms.ModelForm):
         widgets = {
             'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
         }
-
-class DeleteOphthalmologistForm(forms.ModelForm):
-    class Meta:
-        model = Ophthalmologist
-        fields = ['medical_license']
-
-class DeletePatientForm(forms.ModelForm):
-    class Meta:
-        model = Patient
-        fields = ['identification']

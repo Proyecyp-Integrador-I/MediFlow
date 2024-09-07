@@ -32,10 +32,10 @@ urlpatterns = [
     path('patient-extraction/', mediflowViews.automated_patient_extraction, name="patient_extraction"),
     path('administrator/', adminViews.administrator, name="administrator"),
     path('new-ophthalmologist/', adminViews.new_ophthalmologist, name="new_ophthalmologist"),
-    path('delete-ophthalmologist/', adminViews.delete_ophthalmologist, name="delete_ophthalmologist"),
-    path('delete-patient/', adminViews.delete_patient, name="delete_patient"),
+    path('delete-ophthalmologist/<str:medical_license>/', adminViews.delete_ophthalmologist, name="delete_ophthalmologist"),
+    path('delete-patient/<str:identification>/', adminViews.delete_patient, name="delete_patient"),
     path('edit-ophthalmologist/<str:medical_license>/', adminViews.edit_ophthalmologist, name="edit_ophthalmologist"),
-    path('edit-patient/<str:identification>', adminViews.edit_patient, name="edit_patient"),
+    path('edit-patient/<str:identification>/', adminViews.edit_patient, name="edit_patient"),
 ]
 
 if settings.DEBUG:
