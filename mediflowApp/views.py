@@ -78,29 +78,12 @@ def download(request, path):
     file_path = f'media/{exam.exam_type}_{patient.name}_{patient.last_name}.pdf'
     generate_analysis_pdf(exam, patient, file_path)
 
-    password = 12345
-    protected_file_path = f'media/protected_{exam.exam_type}_{patient.name}_{patient.last_name}.pdf'
-    add_password_to_pdf(file_path, protected_file_path, password)
-
     exam.save()
 
     with open(file_path, "rb") as fh:
         response = HttpResponse(fh.read(), content_type="applicaction/pdf")
         response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
         return response
-
-def add_password_to_pdf(input_pdf, output_pdf, password):
-    reader = PdfReader(input_pdf)
-    writer = PdfWriter()
-
-    for page in reader.pages:
-        writer.add_page(page)
-
-    writer.encrypt(password)
-
-    with open(output_pdf, 'wb') as output_file:
-        writer.write(output_file)
-
 
 """     if not os.path.exists(file_path):
             exam = get_object_or_404(Exam, pk=path)
@@ -169,6 +152,18 @@ def view_pdf(request, pk):
         form = UploadFileForm(instance=exam)
     return render(request, 'view_pdf.html', {'form': form, 'file': exam, 'default_analysis': default_analysis})
 
+def add_password_to_pdf(input_pdf, output_pdf, password):
+    reader = PdfReader(input_pdf)
+    writer = PdfWriter()
+
+    for page in reader.pages:
+        writer.add_page(page)
+
+    writer.encrypt(user_password=password)
+
+    with open(output_pdf, 'wb') as output_file:
+        writer.write(output_file)
+
 def email_view(request, pk):
     exam = get_object_or_404(Exam, pk=pk)
     patient = exam.patient
@@ -183,7 +178,12 @@ def email_view(request, pk):
                     [Nombre de la clínica]
                 '''
         attachment_path = f'media/{exam.exam_type}_{patient.name}_{patient.last_name}.pdf'
-        result = send_email(user_id, recipient, subject, body, attachment_path)
+
+        password = "hola"
+        protected_attachment_path = f'media/protected_{exam.exam_type}_{patient.name}_{patient.last_name}.pdf'
+        add_password_to_pdf(attachment_path, protected_attachment_path, password)
+
+        result = send_email(user_id, recipient, subject, body, protected_attachment_path)
         if result["status"] == "success":
             messages.success(request, f'Email enviado exitosamente a {recipient}')
             return redirect('view_pdf', pk=pk)
