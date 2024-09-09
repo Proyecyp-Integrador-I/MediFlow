@@ -17,6 +17,8 @@
             <a href="{% url 'new_patient' %}" class="btn btn-success">Add Patient</a>
             <a href="{% url 'patient_extraction' %}" class="btn btn-success">Automated Patient Extraction</a>
             <a href="{% url 'new_ophthalmologist' %}" class="btn btn-success">Add Ophthalmologist</a>
+            <a href="{% url 'create_user' %}" class="btn btn-warning">Create User</a>
+            <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
         </div>
 
         {% if messages %}

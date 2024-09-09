@@ -3,13 +3,35 @@ from .forms import * # Importación de los formularios
 from .forms import *
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import user_passes_test
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .forms import CustomUserCreationForm
 
+# Función de prueba para verificar si el usuario es superusuario o staff
+def is_superuser_or_staff(user):
+    return user.is_superuser or user.is_staff
+
+@user_passes_test(is_superuser_or_staff)
+def create_user(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('administrator')  
+    else:
+        form = CustomUserCreationForm()
+
+    return render(request, 'user_create.html', {'form': form})
+    
+@user_passes_test(is_superuser_or_staff)
 def administrator(request):
     patients = Patient.objects.all()
     files = Exam.objects.all() # Filter by user
     doctors = Ophthalmologist.objects.all()
     return render(request, 'administrator.html', {'patients': patients, 'files': files, 'doctors': doctors})
 
+@user_passes_test(is_superuser_or_staff)
 def new_ophthalmologist(request):
     if request.method == 'POST':
         form = AddOphthalmologistForm(request.POST)
@@ -23,6 +45,7 @@ def new_ophthalmologist(request):
         form = AddOphthalmologistForm()
     return render(request, 'new_ophthalmologist.html', {'form': form})
 
+@user_passes_test(is_superuser_or_staff)
 def delete_ophthalmologist(request, medical_license):
     if request.method == 'POST':
         ophthalmologist = Ophthalmologist.objects.filter(medical_license=medical_license).first()
@@ -35,6 +58,7 @@ def delete_ophthalmologist(request, medical_license):
 
     return redirect('administrator')
 
+@user_passes_test(is_superuser_or_staff)
 def delete_patient(request, identification):
     if request.method == 'POST':
         patient = Patient.objects.filter(identification=identification).first()
@@ -47,6 +71,7 @@ def delete_patient(request, identification):
 
     return redirect('administrator')
 
+@user_passes_test(is_superuser_or_staff)
 def edit_ophthalmologist(request, medical_license):
     doctor = get_object_or_404(Ophthalmologist, medical_license=medical_license)
     
@@ -63,6 +88,7 @@ def edit_ophthalmologist(request, medical_license):
     
     return render(request, 'edit_ophthalmologist.html', {'form': form})
 
+@user_passes_test(is_superuser_or_staff)
 def edit_patient(request, identification):
     patient = get_object_or_404(Patient, identification=identification)
     

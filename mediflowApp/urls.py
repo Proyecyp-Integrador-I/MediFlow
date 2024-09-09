@@ -9,4 +9,6 @@ urlpatterns = [
     path('exam/download/<int:path>', mediflowViews.download, name="download"),
     path('exam/next_exam/', mediflowViews.next_exam, name="next_exam"),
     path('patient-extraction/', mediflowViews.automated_patient_extraction, name="patient_extraction"),
+    path('login/', mediflowViews.login_view, name='login'),
+    path('logout/', mediflowViews.logout_view, name='logout'),
 ]
