@@ -11,4 +11,5 @@ urlpatterns = [
     path('patient-extraction/', mediflowViews.automated_patient_extraction, name="patient_extraction"),
     path('login/', mediflowViews.login_view, name='login'),
     path('logout/', mediflowViews.logout_view, name='logout'),
+    path('exam/send_exam/<int:pk>', mediflowViews.email_view, name="send_exam"),
 ]
