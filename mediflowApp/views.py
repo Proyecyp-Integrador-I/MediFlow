@@ -46,7 +46,7 @@ def logout_view(request):
     return redirect('login')
 
 
-@login_required
+#@login_required
 def home(request):
     files = Exam.objects.all() # Filter by user
     searchTerm = request.GET.get('searchPatient')

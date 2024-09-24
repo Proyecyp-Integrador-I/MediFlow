@@ -33,8 +33,8 @@
         <div class="row row-cols-1 row-cols-md-3 g-4">
             {% for patient in Patient %}
             <div v-for="patient in Patient" class="col">
-                    {% if Patient.name.url %}
-                        <a href="{{ Patient.name.url }}" class="btn btn-primary"> Patient Link</a>
+                    {% if name.url %}
+                        <a href="{{ name.url }}" class="btn btn-primary"> Patient Link</a>
                     {% endif %}
                 </div>
             </div>
