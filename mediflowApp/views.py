@@ -38,7 +38,7 @@ def login_view(request):
                 return render(request, 'login.html', {'form': form, 'error_message': error_message})
     else:
         form = LoginForm()
-    
+
     return render(request, 'login.html', {'form': form, 'error_message': error_message})
 
 def logout_view(request):
@@ -51,10 +51,10 @@ def home(request):
     files = Exam.objects.all() # Filter by user
     searchTerm = request.GET.get('searchPatient')
     if searchTerm:
-        patient = Exam.objects.filter(patient__icontains='searchTerm')
+        patient = Patient.objects.filter(name__icontains='searchTerm')
     else:
-        patient = Exam.objects.all()
-    return render(request, 'home.html', {'searchTerm':searchTerm, 'patient':patient, 'files':files})
+        patient = Patient.objects.all()
+    return render(request, 'home.html', {'searchTerm':searchTerm, 'Patient':patient, 'files':files})
 
 @login_required
 def new_exam(request):

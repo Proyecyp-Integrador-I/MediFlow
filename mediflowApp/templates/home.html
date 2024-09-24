@@ -31,10 +31,10 @@
             <button type="submit" class="btn btn-primary mb-5">Search</button>
         </form>
         <div class="row row-cols-1 row-cols-md-3 g-4">
-            {% for patient in File %}
-            <div v-for="patient in File" class="col">
-                    {% if file.file.url %}
-                        <a href="{{ file.file.url }}" class="btn btn-primary"> Patient Link</a>
+            {% for patient in Patient %}
+            <div v-for="patient in Patient" class="col">
+                    {% if Patient.name.url %}
+                        <a href="{{ Patient.name.url }}" class="btn btn-primary"> Patient Link</a>
                     {% endif %}
                 </div>
             </div>
