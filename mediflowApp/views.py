@@ -46,15 +46,15 @@ def logout_view(request):
     return redirect('login')
 
 
-#@login_required
+@login_required
 def home(request):
     files = Exam.objects.all() # Filter by user
-    searchTerm = request.GET.get('searchPatient')
+    searchTerm = request.GET.get('searchPatient', '')
     if searchTerm:
-        patient = Patient.objects.filter(name__icontains='searchTerm')
+        patients = Patient.objects.filter(name__icontains='searchTerm')
     else:
-        patient = Patient.objects.all()
-    return render(request, 'home.html', {'searchTerm':searchTerm, 'Patient':patient, 'files':files})
+        patients = Patient.objects.all()
+    return render(request, 'home.html', {'searchTerm':searchTerm, 'Patient':patients, 'files':files})
 
 @login_required
 def new_exam(request):

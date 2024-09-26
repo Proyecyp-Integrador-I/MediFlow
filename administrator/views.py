@@ -29,7 +29,12 @@ def administrator(request):
     patients = Patient.objects.all()
     files = Exam.objects.all() # Filter by user
     doctors = Ophthalmologist.objects.all()
-    return render(request, 'administrator.html', {'patients': patients, 'files': files, 'doctors': doctors})
+    searchTerm = request.GET.get('searchPatient')
+    if searchTerm:
+        patients = Patient.objects.filter(name__icontains='searchTerm')
+    else:
+        patients = Patient.objects.all()
+    return render(request, 'administrator.html', {'patients': patients, 'files': files, 'doctors': doctors, 'searchTerm':searchTerm})
 
 @user_passes_test(is_superuser_or_staff)
 def new_ophthalmologist(request):
