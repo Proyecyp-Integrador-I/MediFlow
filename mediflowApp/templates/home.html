@@ -27,26 +27,27 @@
             <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
         </div>
 
-        <form action="" method="GET">
-            <div class="container mb-3">
-                <label for="searchPatient" class="form-label">
-                    Search for Patient:
-                </label>
-                <input type="text" class="form-control" name="searchPatient" value="{{ request.GET.searchPatient }}"/>
-            </div>
-            <button type="submit" class="btn btn-primary mb-5">Search</button>
-        </form>
-        <div class="table-container">
-            {% for file in files %}
-            <div v-for="file in files" class="col">
-                    {% if file.patient.name.url %}
-                        <a href="{{ file.patient.name.url }}" class="btn btn-primary"> Patient Link</a>
-                    {% endif %}
+        <body>
+            <form action="" method="GET">
+                <div class="container mb-3">
+                    <label for="searchPatient" class="form-label">
+                        Search for Patient:
+                    </label>
+                    <input type="text" class="form-control" name="searchPatient" value="{{ request.GET.searchPatient }}"/>
+                </div>
+                <button type="submit" class="btn btn-primary mb-5">Search</button>
+            </form>
+            <div class="table-container">
+                {% for patient in Patient %}
+                <div v-for="patient in Patient" class="col">
+                        {% if patient.url %}
+                            <a href="{{ patient.url }}" class="btn btn-primary"> Patient Link</a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
-        </div>
-            {% endfor %}
-        </div>
+                {% endfor %}
+            </div>
 
         {% if messages %}
         <div class="messages">

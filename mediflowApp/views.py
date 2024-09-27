@@ -22,7 +22,7 @@ def login_view(request):
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
-            
+
             # Autenticamos el usuario
             user = authenticate(email=email, password=password)
 
@@ -49,12 +49,16 @@ def logout_view(request):
 @login_required
 def home(request):
     files = Exam.objects.all() # Filter by user
+    return render(request, 'home.html', {'files':files})
+
+@login_required
+def search(request):
     searchTerm = request.GET.get('searchPatient', '')
     if searchTerm:
         patients = Patient.objects.filter(name__icontains='searchTerm')
     else:
         patients = Patient.objects.all()
-    return render(request, 'home.html', {'searchTerm':searchTerm, 'Patient':patients, 'files':files})
+    return render(request, 'search.html', {'searchTerm':searchTerm, 'Patient':patients})
 
 @login_required
 def new_exam(request):
