@@ -41,7 +41,7 @@ class UploadFileForm(forms.ModelForm):
 class UploadExamForm(forms.ModelForm):
     class Meta:
         model = Exam
-        fields = ['file', 'date', 'apparatus', 'exam_type', 'patient']
+        fields = ['file', 'date_analysis', 'apparatus', 'exam_type', 'patient']
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'})
         }
