@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from mediflowApp.views import *
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from datetime import date
 from io import BytesIO
