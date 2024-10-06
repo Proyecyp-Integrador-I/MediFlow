@@ -28,7 +28,7 @@
         </div>
 
         <body>
-            <form action="" method="GET">
+            <form action="{% url 'search' %}" method="GET">
                 <div class="container mb-3">
                     <label for="searchPatient" class="form-label">
                         Search for Patient:
@@ -37,17 +37,6 @@
                 </div>
                 <button type="submit" class="btn btn-primary mb-5">Search</button>
             </form>
-            <div class="table-container">
-                {% for patient in Patient %}
-                <div v-for="patient in Patient" class="col">
-                        {% if patient.url %}
-                            <a href="{{ patient.url }}" class="btn btn-primary"> Patient Link</a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-                {% endfor %}
-            </div>
 
         {% if messages %}
         <div class="messages">
@@ -74,6 +63,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% if files %}
                     {% for file in files %}
                         <tr>
                             <!--<td>{{ file.id }}</td>-->
@@ -94,6 +84,7 @@
                             </td>
                         </tr>
                     {% endfor %}
+                    {% endif %}
                 </tbody>
             </table>
         </div>
