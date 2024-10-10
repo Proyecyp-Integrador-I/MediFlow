@@ -51,7 +51,7 @@ def generate_analysis_pdf(exam, patient, output_file, doctor=Ophthalmologist(nam
 
     # Patient ID, age and date
     pdf.cell(30)
-    pdf.cell(text=f"FECHA: {exam.date}", align="L")
+    pdf.cell(text=f"FECHA: {exam.exam_date}", align="L")
     pdf.cell(20)
     pdf.cell( text=f"EDAD: {patient.age} años", align="L")
     pdf.cell(20)

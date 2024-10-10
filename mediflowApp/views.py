@@ -128,7 +128,7 @@ def download(request, path):
     exam = get_object_or_404(Exam, pk=path)
     exam.result_analysis = exam.result_analysis
     exam.is_analyzed = True
-    exam.date_analysis = datetime.now()
+    exam.analysis_date = datetime.now()
     patient = exam.patient
     file_path = f'media/{exam.exam_type}_{patient.name}_{patient.last_name}.pdf'
     generate_analysis_pdf(exam, patient, file_path)
@@ -181,7 +181,7 @@ def view_pdf(request, pk):
             patient = exam.patient
 
             exam.is_analyzed = True  # Por ejemplo, marcar como analizado una vez se edite
-            exam.date_analysis = datetime.now()
+            exam.analysis_date = datetime.now()
             # Crear un PDF con el resultado del análisis
             pdf_path = f'media/{exam.exam_type}_{patient.name}_{patient.last_name}.pdf'
             generate_analysis_pdf(exam, patient, pdf_path)
