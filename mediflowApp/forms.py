@@ -1,5 +1,33 @@
 from django import forms
 from .models import Exam, Patient
+from django.contrib.auth.forms import AuthenticationForm
+from .models import CustomUser
+
+class LoginForm(forms.Form):
+    email = forms.CharField(max_length=255, widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'Ingresa tu nombre de usuario',
+        'id': 'username',
+        'name': 'username'
+    }))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'Ingresa tu contraseña',
+        'id': 'password',
+        'name': 'password'
+    }))
+
+    def clean(self):
+        cleaned_data = super().clean()
+        email = cleaned_data.get("email")
+        password = cleaned_data.get("password")
+
+        if not CustomUser.objects.filter(email=email).exists():
+            raise forms.ValidationError("User does not exist")
+
+        user = CustomUser.objects.filter(email=email).first()
+        if not user.check_password(password):
+            raise forms.ValidationError("Incorrect password")
 
 class UploadFileForm(forms.ModelForm):
     class Meta:

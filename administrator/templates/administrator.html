@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container my-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3"><svg class="w-[48px] h-[48px] text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M11 9h6m-6 3h6m-6 3h6M6.996 9h.01m-.01 3h.01m-.01 3h.01M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
+              </svg>
+               Administrator</h1>
+            <a href="{% url 'new_exam' %}" class="btn btn-success">Upload Exam</a>
+            <a href="{% url 'new_patient' %}" class="btn btn-success">Add Patient</a>
+            <a href="{% url 'patient_extraction' %}" class="btn btn-success">Automated Patient Extraction</a>
+            <a href="{% url 'new_ophthalmologist' %}" class="btn btn-success">Add Ophthalmologist</a>
+            <a href="{% url 'create_user' %}" class="btn btn-warning">Create User</a>
+            <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+        </div>
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+         <!-- Nav tabs -->
+         <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="ophthalmologists-tab" data-bs-toggle="tab" data-bs-target="#ophthalmologists" type="button" role="tab" aria-controls="ophthalmologists" aria-selected="true">Ophthalmologists</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="patients-tab" data-bs-toggle="tab" data-bs-target="#patients" type="button" role="tab" aria-controls="patients" aria-selected="false">Patients</button>
+            </li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <!-- Ophthalmologists Table -->
+            <div class="tab-pane fade show active" id="ophthalmologists" role="tabpanel" aria-labelledby="ophthalmologists-tab">
+                <div class="table-responsive mt-3">
+                    <table class="table table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>🩺Doctor's name</th>
+                                <th>🩺Doctor's medical license</th>
+                                <th>🩺Doctor's specialty</th>
+                                <th>🩺Doctor's email</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for doctor in doctors %}
+                            <tr>
+                                <td>{{ doctor.name }} {{ doctor.last_name }}</td>
+                                <td>{{ doctor.medical_license }}</td>
+                                <td>{{ doctor.specialty }}</td>
+                                <td>{{ doctor.email }}</td>
+                                <td>
+                                    <a href="{% url 'edit_ophthalmologist' doctor.medical_license %}" class="btn btn-warning btn-sm">
+                                        ✏️
+                                    </a>
+                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteOphthalmologistModal" data-doctor-id="{{ doctor.medical_license }}">
+                                        🗑️
+                                    </button>
+
+                                    <div class="modal fade" id="confirmDeleteOphthalmologistModal" tabindex="-1" aria-labelledby="confirmDeleteOphthalmologistModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="confirmDeleteOphthalmologistModalLabel">Confirm Deletion</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete the ophthalmologist {{ doctor.name }} {{ doctor.last_name }} with medical license {{ doctor.medical_license }}?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <form method="post" action="{% url 'delete_ophthalmologist' doctor.medical_license %}">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-danger">Confirm</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Patients Table -->
+            <div class="tab-pane fade" id="patients" role="tabpanel" aria-labelledby="patients-tab">
+                <div class="table-responsive mt-3">
+                    <table class="table table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>🧑Patient's name</th>
+                                <th>🧑Patient's ID</th>
+                                <th>📅Date of examination</th>
+                                <th>File</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for patient in patients %}
+                            <tr>
+                                <td>{{ patient.name }} {{ patient.last_name }}</td>
+                                <td>{{ patient.identification }}</td>
+
+                                {% with file=None %}
+                                    {% for f in files %}
+                                        {% if f.patient.identification == patient.identification %}
+                                            {% with file=f %}{% endwith %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endwith %}
+
+                                {% if file %}
+                                    <td>{{ file.date }}</td>
+                                    <td>
+                                        <a target="_blank" href="{{ file.file.url }}" class="btn btn-link">
+                                            <svg class="w-[48px] h-[48px] text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M5 17v-5h1.5a1.5 1.5 0 1 1 0 3H5m12 2v-5h2m-2 3h2M5 10V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1v6M5 19v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1M10 3v4a1 1 0 0 1-1 1H5m6 4v5h1.375A1.627 1.627 0 0 0 14 15.375v-1.75A1.627 1.627 0 0 0 12.375 12H11Z" />
+                                            </svg>
+                                        </a>
+                                    </td>
+                                {% else %}
+                                    <td></td>
+                                    <td></td>
+                                {% endif %}
+                                <td>
+                                    <a href="{% url 'edit_patient' patient.identification %}" class="btn btn-warning btn-sm">
+                                        ✏️
+                                    </a>
+
+                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeletePatientModal" data-patient-id="{{ patient.identification }}">
+                                        🗑️
+                                    </button>
+
+                                    <div class="modal fade" id="confirmDeletePatientModal" tabindex="-1" aria-labelledby="confirmDeletePatientModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="confirmDeletePatientModalLabel">Confirm Deletion</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete the patient {{ patient.name }} {{ patient.last_name }} with ID {{ patient.identification }}?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <form method="post" action="{% url 'delete_patient' patient.identification %}">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-danger">Confirm</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!--Bootstrap-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
