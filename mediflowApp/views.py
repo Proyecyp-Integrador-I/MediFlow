@@ -10,6 +10,7 @@ from mediflowApp.utils.send_email import send_email
 from PyPDF2 import PdfReader, PdfWriter
 import os
 import pandas as pd
+from datetime import datetime
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -127,6 +128,7 @@ def download(request, path):
     exam = get_object_or_404(Exam, pk=path)
     exam.result_analysis = exam.result_analysis
     exam.is_analyzed = True
+    exam.analysis_date = datetime.now()
     patient = exam.patient
     file_path = f'media/{exam.exam_type}_{patient.name}_{patient.last_name}.pdf'
     generate_analysis_pdf(exam, patient, file_path)
@@ -179,6 +181,7 @@ def view_pdf(request, pk):
             patient = exam.patient
 
             exam.is_analyzed = True  # Por ejemplo, marcar como analizado una vez se edite
+            exam.analysis_date = datetime.now()
             # Crear un PDF con el resultado del análisis
             pdf_path = f'media/{exam.exam_type}_{patient.name}_{patient.last_name}.pdf'
             generate_analysis_pdf(exam, patient, pdf_path)

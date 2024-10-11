@@ -72,7 +72,8 @@ class Ophthalmologist(models.Model):
 
 class Exam(models.Model):
     id = models.AutoField(primary_key=True)
-    date = models.DateField(null=True, blank=True)
+    exam_date = models.DateField(null=True, blank=True)
+    analysis_date = models.DateField(null=True, blank=True)
     file = models.FileField(upload_to='uploads/')
     result_analysis = models.TextField(blank=True)
     is_analyzed = models.BooleanField(default=False)
