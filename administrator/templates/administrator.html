@@ -118,16 +118,10 @@
                                 <td>{{ patient.name }} {{ patient.last_name }}</td>
                                 <td>{{ patient.identification }}</td>
 
-                                {% with file=None %}
-                                    {% for f in files %}
-                                        {% if f.patient.identification == patient.identification %}
-                                            {% with file=f %}{% endwith %}
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endwith %}
-
-                                {% if file %}
-                                    <td>{{ file.date }}</td>
+                                {% if files %}
+                                {% for file in files %}
+                                {% if file.patient.identification == patient.identification %}
+                                    <td>{{ file.exam_date }}</td>
                                     <td>
                                         <a target="_blank" href="{{ file.file.url }}" class="btn btn-link">
                                             <svg class="w-[48px] h-[48px] text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -138,6 +132,8 @@
                                 {% else %}
                                     <td></td>
                                     <td></td>
+                                {% endif %}
+                                {% endfor %}
                                 {% endif %}
                                 <td>
                                     <a href="{% url 'edit_patient' patient.identification %}" class="btn btn-warning btn-sm">

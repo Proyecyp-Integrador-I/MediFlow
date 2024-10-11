@@ -6,3 +6,5 @@ db.sqlite3
 media/
 google_auth/
 .venv/
+**/__pycache__/
+!**/migrations/

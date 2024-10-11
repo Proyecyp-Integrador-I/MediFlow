@@ -9,13 +9,16 @@ from io import BytesIO
 import base64
 
 def visualizeStatistics(request):
-    graphAges = patientByAge()
-    graphExamsByDate = examsByDate()
-    graphGender = patientByGender()
-    graphInsurance = patientByInsurance()
-    return render(request, 'statistics.html', {'graphAges': graphAges, 'graphGender': graphGender, 'graphInsurance': graphInsurance, 'graphToday': graphExamsByDate['graphToday'], 
-    'graphLastSevenDays': graphExamsByDate['graphLastSevenDays'], 'graphLastMonth': graphExamsByDate['graphLastMonth'], 'graphThisYear': graphExamsByDate['graphThisYear'], 
-    'graphAllYears': graphExamsByDate['graphAllYears']})
+    try:
+        graphAges = patientByAge()
+        graphExamsByDate = examsByDate()
+        graphGender = patientByGender()
+        graphInsurance = patientByInsurance()
+        return render(request, 'statistics.html', {'graphAges': graphAges, 'graphGender': graphGender, 'graphInsurance': graphInsurance, 'graphToday': graphExamsByDate['graphToday'], 
+        'graphLastSevenDays': graphExamsByDate['graphLastSevenDays'], 'graphLastMonth': graphExamsByDate['graphLastMonth'], 'graphThisYear': graphExamsByDate['graphThisYear'], 
+        'graphAllYears': graphExamsByDate['graphAllYears']})
+    except:
+        return render(request, 'statistics-error.html')
 
 def createStatistics(x_param, y_param, x_label, y_label, graph_type):
     plt.rcParams['font.family'] = 'sans-serif'
