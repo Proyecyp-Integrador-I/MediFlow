@@ -84,4 +84,4 @@ class Exam(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"File {self.id} - {self.date}"
+        return f"File {self.id} - {self.exam_date}"

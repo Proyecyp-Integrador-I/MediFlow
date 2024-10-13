@@ -56,10 +56,11 @@ def home(request):
 def search(request):
     searchTerm = request.GET.get('searchPatient', '')
     if searchTerm:
-        files = Patient.objects.filter(name__icontains=searchTerm)
+        files = Exam.objects.filter(patient__name__icontains = searchTerm)
+        
     else:
-        files = Patient.objects.all()
-    return render(request, 'home.html', {'searchTerm':searchTerm, 'file':files})
+        files = Exam.objects.all()
+    return render(request, 'home.html', {'searchTerm':searchTerm, 'files':files})
 
 @login_required
 def new_exam(request):
