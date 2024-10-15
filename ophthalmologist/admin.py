@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import Exam, Patient, Ophthalmologist
-from .models import CustomUser
+from .models import Patient, Ophthalmologist#, Exam
+from administrator.models import CustomUser
 
 class CustomUserAdmin(admin.ModelAdmin):
     model = CustomUser
@@ -24,6 +24,6 @@ class CustomUserAdmin(admin.ModelAdmin):
     filter_horizontal = ()
 
 admin.site.register(CustomUser, CustomUserAdmin)
-admin.site.register(Exam)
+#admin.site.register(Exam)
 admin.site.register(Patient)
 admin.site.register(Ophthalmologist)

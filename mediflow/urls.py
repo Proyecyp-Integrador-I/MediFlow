@@ -5,8 +5,9 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('mediflowApp.urls')),  # Incluye URLs de mediflowApp
+    path('', include('ophthalmologist.urls')),  # Incluye URLs de ophthalmologist
     path('administrator/', include('administrator.urls')),  # Incluye URLs de administrador
+    path('exam/', include('exam.urls')),
     path('statistics/', include('statistic.urls')),
 ]
 

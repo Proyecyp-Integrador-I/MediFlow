@@ -1,6 +1,6 @@
 from fpdf import FPDF
 import pypdfium2 as pdfium
-from mediflowApp.models import Ophthalmologist, Patient, Exam
+from ophthalmologist.models import Ophthalmologist
 
 def generate_analysis_pdf(exam, patient, output_file, doctor=Ophthalmologist(name="Martha Luz", last_name="Zuluaga Posada", email="johndoe@example.com", medical_license="RM-5-1382-97", specialty="Oftalmólogo y Corneólogo CES"), logo="media/logo_clinica.png"):
     class PDF(FPDF):

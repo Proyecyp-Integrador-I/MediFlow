@@ -38,9 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'mediflowApp',
     'administrator',
-    'statistic'
+    'statistic',
+    'ophthalmologist',
+    'exam'
 ]
 
 MIDDLEWARE = [
@@ -133,7 +134,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 # Autenticación de usuario difernte al que trae por defecto django
-AUTH_USER_MODEL = 'mediflowApp.CustomUser'
+AUTH_USER_MODEL = 'administrator.CustomUser'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',

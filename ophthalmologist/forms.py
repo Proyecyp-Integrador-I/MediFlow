@@ -1,7 +1,8 @@
 from django import forms
-from .models import Exam, Patient
+from .models import Patient
+from exam.models import Exam
+from administrator.models import CustomUser
 from django.contrib.auth.forms import AuthenticationForm
-from .models import CustomUser
 
 class LoginForm(forms.Form):
     email = forms.CharField(max_length=255, widget=forms.TextInput(attrs={
