@@ -71,7 +71,7 @@
 
                 <div class="mb-3">
                     <label for="examDate" class="form-label">Date</label>
-                    <input type="date" class="form-control" id="examDate" name="exam_date" value="{{ exam.date|date:'Y-m-d' }}" required>
+                    <input type="date" class="form-control" id="examDate" name="exam_date" value="{{ exam.exam_date|date:'Y-m-d' }}" required>
                 </div>
 
                 <button type="submit" name = "validate_exam" class="btn btn-primary">Upload</button>

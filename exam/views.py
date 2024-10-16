@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from .forms import * # Importación de los formularios
-from .models import Exam
+from .models import Exam, Patient
 from django.conf import settings
 from django.contrib import messages
 from .forms import UploadExamForm # Importación de los formularios
@@ -66,7 +66,7 @@ def new_exam(request):
 
             exam_data = {
                 "id": exam.id,
-                "date": exam.date.isoformat() if exam.date else None,
+                "date": exam.exam_date.isoformat() if exam.exam_date else None,
                 "file": exam.file.name,
                 "exam_type": exam.exam_type,
                 "is_analyzed": exam.is_analyzed,
