@@ -49,7 +49,7 @@ def new_exam(request):
                 patient = Patient(name=name, last_name=last_name, identification=identification, age=age, date_of_birth=birthdate, gender=gender)
                 patient.save()
 
-            exam = Exam(patient=patient, date=exam_date, file=files[0])
+            exam = Exam(patient=patient, exam_date=exam_date, file=files[0])
             exam.save()
 
             exam_new  = exam
@@ -115,7 +115,7 @@ def new_exam(request):
 
             patient = Patient(name=name, last_name=last_name, identification=identification, age=age, date_of_birth=date_of_birth, gender=gender)
             patient.save()
-            exam = Exam(patient=patient, date=date, file=file, exam_type=exam_type)
+            exam = Exam(patient=patient, exam_date=date, file=file, exam_type=exam_type)
             exam.save()
             print(exam.file.url)
 
