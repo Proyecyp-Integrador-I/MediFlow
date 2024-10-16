@@ -3,16 +3,23 @@ from .forms import * # Importación de los formularios
 from .forms import Exam, Patient, LoginForm
 from django.conf import settings
 from django.contrib import messages
-from .forms import UploadFileForm, UploadExamForm, AddPatientForm # Importación de los formularios
+from .forms import UploadFileForm, AddPatientForm # Importación de los formularios
 from mediflowApp.utils.generate_analysis import generate_analysis_pdf
 from django.conf import settings
-from mediflowApp.utils.send_email import send_email
-from PyPDF2 import PdfReader, PdfWriter
-import os
-import pandas as pd
+
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+
+from mediflowApp.utils.send_email import send_email
+
+from PyPDF2 import PdfReader, PdfWriter
+import os
+import pandas as pd
+import pdfplumber
+import re
+import io
+import datetime
 
 def login_view(request):
     error_message = ""
@@ -53,6 +60,9 @@ def home(request):
 
 @login_required
 def search(request):
+    
+    Patient.objects.all().delete()
+    Exam.objects.all().delete()
     searchTerm = request.GET.get('searchPatient', '')
     if searchTerm:
         files = Patient.objects.filter(name__icontains=searchTerm)
@@ -60,16 +70,158 @@ def search(request):
         files = Patient.objects.all()
     return render(request, 'home.html', {'searchTerm':searchTerm, 'file':files})
 
+
+def calculate_age(birthdate):
+    today = datetime.datetime.today()
+    age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
+    return age
+
+def text_extraction(file_content):
+        with pdfplumber.open(io.BytesIO(file_content)) as pdf:
+            first_page = pdf.pages[0]
+            text = first_page.extract_text()
+            id = re.search("(?<=ID:)\s?[0-9]*", text)
+            name = re.search("(?<=Name:)\s?.* .*, \w+|(?<=Nombre:)\s?.* .*, .*?(?=OD|OS)", text)
+            birthdate = re.search("(?<=DOB:)\s?..-...-..|(?<=Fecha de nacimiento:)\s?[0-9]{1,2}/[0-9]{2}/[0-9]{4}", text)
+            exam_date = re.search("(?<=Exam Date:)\s?..-...-..|(?<=Fecha de examen:)\s?[0-9]{1,2}/[0-9]{2}/[0-9]{4}", text)
+            gender = re.search("(?<=Gender:)\s?\w+|(?<=Sexo:)\s?\w+", text)
+            name = name.group().strip() if name else ''
+            id = id.group().strip() if id else ''
+            birthdate = birthdate.group().strip() if birthdate else ''
+            exam_date = exam_date.group().strip() if exam_date else ''
+            gender = gender.group().strip() if gender else ''
+
+            try:
+                birthdate = datetime.datetime.strptime(birthdate, '%d-%b-%y').date() if birthdate else None
+                exam_date = datetime.datetime.strptime(exam_date, '%d-%b-%y').date() if exam_date else None
+            except:
+                try:
+                    birthdate = datetime.datetime.strptime(birthdate, '%d/%m/%Y').date() if birthdate else None
+                    exam_date = datetime.datetime.strptime(exam_date, '%d/%m/%Y').date() if exam_date else None
+                except:
+                    birthdate = None
+                    exam_date = None
+
+            last_name = name.split(", ")[0] if name else ''
+            name = name.split(", ")[1] if name else ''
+
+            return {
+                "id": id,
+                "name": name,
+                "last_name": last_name,
+                "birthdate": birthdate,
+                "exam_date": exam_date,
+                "gender": gender
+            }
+
 @login_required
 def new_exam(request):
     if request.method == 'POST':
-        form = UploadExamForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect("home") # Redirigir a una página de éxito
-    else:
-        form = UploadExamForm()
-    return render(request, 'new_exam.html', {'form': form})
+        if 'new_exam' in request.POST:
+            request.session.pop('patient_data', None)
+            request.session.pop('exam_data', None)
+            files = request.FILES.getlist('examFiles')
+
+            if not files:
+                messages.error(request, 'No files were uploaded')
+                return redirect('new_exam')
+            
+            file_content = files[0].read()
+            extracted_data = text_extraction(file_content)
+            print(extracted_data)
+
+            identification = extracted_data['id']
+            birthdate = extracted_data['birthdate']
+            exam_date = extracted_data['exam_date']
+            gender = extracted_data['gender']
+            name = extracted_data['name']
+            last_name = extracted_data['last_name']
+
+            if birthdate:
+                age = calculate_age(birthdate)
+            else:
+                age = None
+            
+            existing_patient = Patient.objects.filter(identification=identification).first()
+            if existing_patient:
+                patient = existing_patient
+            else:
+                patient = Patient(name=name, last_name=last_name, identification=identification, age=age, date_of_birth=birthdate, gender=gender)
+                patient.save()
+
+            exam = Exam(patient=patient, date=exam_date, file=files[0])
+            exam.save()
+
+            exam_new  = exam
+            patient_new = patient
+
+            patient_data = {
+                "name": patient.name,
+                "last_name": patient.last_name,
+                "identification": patient.identification,
+                "age": patient.age,
+                "date_of_birth": patient.date_of_birth.isoformat() if patient.date_of_birth else None,
+                "gender": patient.gender
+            }
+
+            exam_data = {
+                "id": exam.id,
+                "date": exam.date.isoformat() if exam.date else None,
+                "file": exam.file.name,
+                "exam_type": exam.exam_type,
+                "is_analyzed": exam.is_analyzed,
+                "result_analysis": exam.result_analysis
+            }
+
+            exam.delete()
+            patient.delete()
+
+            request.session['patient_data'] = patient_data
+            request.session['exam_data'] = exam_data
+
+            print("Patient data: ", patient_data)
+            print(request.session['patient_data'])
+            print(request.session.get('patient_data'))
+
+            return render(request, 'exam_form_valid.html', {'patient': patient_new, 'exam': exam_new})
+
+        elif 'validate_exam' in request.POST:
+
+            # Get the previous patient
+            old_patient = request.session.get('patient_data')
+            old_exam = request.session.get('exam_data')
+
+            name = request.POST.get('patient_name', old_patient["name"])
+            last_name = request.POST.get('patient_last_name', old_patient["last_name"])
+
+            identification = request.POST.get('patient_id', old_patient["identification"])
+
+            if identification == '':
+                messages.error(request, 'Identification is required')
+                return render(request, 'exam_form_valid.html', {'patient': old_patient, 'exam': old_exam})
+            elif Patient.objects.filter(identification=identification).exists():
+                print("Patient exists")
+                messages.error(request, 'Identification already exists')
+                return render(request, 'exam_form_valid.html', {'patient': old_patient, 'exam': old_exam})
+
+            date_of_birth = request.POST.get('patient_DOB', old_patient["date_of_birth"])
+            age = request.POST.get('patient_age', old_patient["age"])
+            gender = request.POST.get('patient_gender', old_patient["gender"])
+
+            date = request.POST.get('exam_date', old_exam["date"])
+
+            exam_type = request.POST.get('exam_type', old_exam["exam_type"])
+            file = old_exam["file"]
+
+            patient = Patient(name=name, last_name=last_name, identification=identification, age=age, date_of_birth=date_of_birth, gender=gender)
+            patient.save()
+            exam = Exam(patient=patient, date=date, file=file, exam_type=exam_type)
+            exam.save()
+            print(exam.file.url)
+
+            return redirect('home')
+    print("No POST")
+    return render(request, 'new_exam.html')
 
 @login_required
 def new_patient(request):
@@ -94,7 +246,6 @@ def automated_patient_extraction(request):
 
             df.columns = df.columns.str.strip()
             for index, row in df.iterrows():
-                print(index)
                 existing_patient = Patient.objects.filter(identification=row['Identificación']).exists()
                 if not existing_patient:
                     patient = Patient(
