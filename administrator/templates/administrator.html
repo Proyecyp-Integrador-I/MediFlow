@@ -5,23 +5,93 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administrator</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        .table-container{
+            margin: 0 auto;
+            max-width: 90%;
+        }
+
+        .table, .table-responsive, .table-striped {
+            border-radius: 20px;
+            overflow: hidden;
+            border: hidden;
+        }
+
+        th {
+            background-color: #B9D0E8 !important; /* Color de fondo del encabezado */
+        }
+
+        .table th, .table td {
+            border: 1px solid #dee2e6;
+        }
+
+        .table-striped>tbody>tr:nth-child(odd)>td, 
+        .table-striped>tbody>tr:nth-child(odd)>th {
+            background-color: #E7F0F8;
+        }
+
+        .table-striped>tbody>tr:nth-child(even)>td, 
+        .table-striped>tbody>tr:nth-child(even)>th {
+            background-color: #D3E3F2;
+        }
+        
+        .btn-delete{
+            background-color: #414E6E !important;
+            border-color: #414E6E !important;
+            border-radius: 20px !important;
+            color: white !important;
+            width: 40% !important;
+        }
+        .btn-edit{
+            background-color: #839DD1 !important;
+            border-color: #839DD1 !important;
+            border-radius: 20px !important;
+            color: white !important;
+            width: 40% !important;
+        }
+
+        .nav-tabs {
+            border-bottom: 2px solid #B9D0E8; /* Línea inferior más gruesa */
+        }
+
+        .nav-tabs .nav-link {
+            border: none; /* Sin bordes por defecto */
+            border-radius: 20px 20px 0 0; /* Esquinas redondeadas en la parte superior */
+            margin-right: 5px; /* Espacio entre tabs */
+            color: #414E6E; /* Color del texto */
+            background-color: #E7F0F8; /* Fondo por defecto */
+            padding: 10px 15px; /* Espaciado interno */
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: #B9D0E8; /* Color de fondo del tab activo */
+            color: white; /* Color del texto del tab activo */
+            font-weight: bold; /* Negrita para el tab activo */
+        }
+
+        .nav-tabs .nav-link:hover {
+            background-color: #D3E3F2; /* Fondo al pasar el mouse */
+            color: #262D40; /* Color del texto al pasar el mouse */
+        }
+    </style>
 </head>
 <body>
-    <div class="container my-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h3"><svg class="w-[48px] h-[48px] text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M11 9h6m-6 3h6m-6 3h6M6.996 9h.01m-.01 3h.01m-.01 3h.01M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
-              </svg>
-               Administrator</h1>
-            <a href="{% url 'new_exam' %}" class="btn btn-success">Upload Exam</a>
-            <a href="{% url 'new_patient' %}" class="btn btn-success">Add Patient</a>
-            <a href="{% url 'patient_extraction' %}" class="btn btn-success">Automated Patient Extraction</a>
-            <a href="{% url 'new_ophthalmologist' %}" class="btn btn-success">Add Ophthalmologist</a>
-            <a href="{% url 'create_user' %}" class="btn btn-warning">Create User</a>
-            <a href="{% url 'statistics' %}" class="btn btn-warning">Statistics</a>
-            <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
-        </div>
+    {% extends 'base.html' %}
 
+    {% block title %}Administrator{% endblock %}
+
+    {% block menu %}
+    <li class="nav-item text-body-secondary"><a href="{% url 'new_exam' %}" class="nav-link">Upload Exam</a></li>
+    <li class="nav-item text-body-secondary"><a href="{% url 'new_patient' %}" class="nav-link">Add Patient</a></li>
+    <li class="nav-item text-body-secondary"><a href="{% url 'patient_extraction' %}" class="nav-link">Automated Patient Extraction</a></li>
+    <li class="nav-item text-body-secondary"><a href="{% url 'new_ophthalmologist' %}" class="nav-link">Add Ophthalmologist</a></li>
+    <li class="nav-item text-body-secondary"><a href="{% url 'create_user' %}" class="nav-link">Create User</a></li>
+    <li class="nav-item text-body-secondary"><a href="{% url 'statistics' %}" class="nav-link">Statistics</a></li>
+    <li class="nav-item text-body-secondary"><a href="{% url 'logout' %}" class="nav-link">Logout</a></li>
+    {% endblock %}
+
+    {% block content %}
+    <div class="container my-4">
         {% if messages %}
         <div class="messages">
             {% for message in messages %}
@@ -47,13 +117,13 @@
             <!-- Ophthalmologists Table -->
             <div class="tab-pane fade show active" id="ophthalmologists" role="tabpanel" aria-labelledby="ophthalmologists-tab">
                 <div class="table-responsive mt-3">
-                    <table class="table table-bordered">
-                        <thead class="table-dark">
+                    <table class="table table-striped">
+                        <thead>
                             <tr>
-                                <th>🩺Doctor's name</th>
-                                <th>🩺Doctor's medical license</th>
-                                <th>🩺Doctor's specialty</th>
-                                <th>🩺Doctor's email</th>
+                                <th>Doctor's name</th>
+                                <th>Doctor's medical license</th>
+                                <th>Doctor's specialty</th>
+                                <th>Doctor's email</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -65,11 +135,11 @@
                                 <td>{{ doctor.specialty }}</td>
                                 <td>{{ doctor.email }}</td>
                                 <td>
-                                    <a href="{% url 'edit_ophthalmologist' doctor.medical_license %}" class="btn btn-warning btn-sm">
-                                        ✏️
+                                    <a href="{% url 'edit_ophthalmologist' doctor.medical_license %}" class="btn btn-edit btn-sm">
+                                        Edit
                                     </a>
-                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteOphthalmologistModal" data-doctor-id="{{ doctor.medical_license }}">
-                                        🗑️
+                                    <button type="button" class="btn btn-delete btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteOphthalmologistModal" data-doctor-id="{{ doctor.medical_license }}">
+                                        Delete
                                     </button>
 
                                     <div class="modal fade" id="confirmDeleteOphthalmologistModal" tabindex="-1" aria-labelledby="confirmDeleteOphthalmologistModalLabel" aria-hidden="true">
@@ -102,12 +172,12 @@
             <!-- Patients Table -->
             <div class="tab-pane fade" id="patients" role="tabpanel" aria-labelledby="patients-tab">
                 <div class="table-responsive mt-3">
-                    <table class="table table-bordered">
-                        <thead class="table-dark">
+                    <table class="table table-striped">
+                        <thead>
                             <tr>
-                                <th>🧑Patient's name</th>
-                                <th>🧑Patient's ID</th>
-                                <th>📅Date of examination</th>
+                                <th>Patient's name</th>
+                                <th>Patient's ID</th>
+                                <th>Date of examination</th>
                                 <th>File</th>
                                 <th>Actions</th>
                             </tr>
@@ -122,7 +192,7 @@
                                 {% for file in files %}
                                 {% if file.patient.identification == patient.identification %}
                                     <td>{{ file.exam_date }}</td>
-                                    <td>
+                                    <td style="text-align: center; padding: 0;">
                                         <a target="_blank" href="{{ file.file.url }}" class="btn btn-link">
                                             <svg class="w-[48px] h-[48px] text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M5 17v-5h1.5a1.5 1.5 0 1 1 0 3H5m12 2v-5h2m-2 3h2M5 10V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1v6M5 19v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1M10 3v4a1 1 0 0 1-1 1H5m6 4v5h1.375A1.627 1.627 0 0 0 14 15.375v-1.75A1.627 1.627 0 0 0 12.375 12H11Z" />
@@ -136,12 +206,12 @@
                                 {% endfor %}
                                 {% endif %}
                                 <td>
-                                    <a href="{% url 'edit_patient' patient.identification %}" class="btn btn-warning btn-sm">
-                                        ✏️
+                                    <a href="{% url 'edit_patient' patient.identification %}" class="btn btn-edit btn-sm">
+                                        Edit
                                     </a>
 
-                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeletePatientModal" data-patient-id="{{ patient.identification }}">
-                                        🗑️
+                                    <button type="button" class="btn btn-delete btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeletePatientModal" data-patient-id="{{ patient.identification }}">
+                                        Delete
                                     </button>
 
                                     <div class="modal fade" id="confirmDeletePatientModal" tabindex="-1" aria-labelledby="confirmDeletePatientModalLabel" aria-hidden="true">
@@ -172,7 +242,7 @@
                 </div>
             </div>
         </div>
-
+        {% endblock %}
         <!--Bootstrap-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>

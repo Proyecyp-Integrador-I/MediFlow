@@ -63,7 +63,7 @@
 </head>
 <body>
     <header class="header-footer py-3">
-        <div class="container d-flex justify-content-between align-items-center">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
             <nav class="navbar">
                 <div class="container-fluid">
                     <button class="navbar-toggler" type="button" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,13 +73,13 @@
             </nav>
 
             <div class="logo">
-                <img src="media/logo_clinica.png" alt="Logo MediFlow" class="img-fluid" style="height: 50px;">
+                <img src="/media/logo_app.png" alt="Logo MediFlow" class="img-fluid" style="height: 50px;">
                 <span class="company-name h5 ms-2">MediFlow</span>
             </div>
 
             <div class="usuario d-flex align-items-center">
-                <img src="media/logo_clinica.png" alt="Perfil" style="height: 30px;">
-                <span class="ms-2">{{ user.get_full_name }}</span>
+                <img src="/media/user_logo.png" alt="Profile" style="height: 30px;">
+                <span class="ms-2">{{ request.user.get_full_name }}</span>
             </div>
         </div>
     </header>
@@ -97,7 +97,7 @@
     </main>
 
     <footer class="header-footer py-3">
-        <div class="container">
+        <div class="container-fluid">
             <p class="mb-0">All rights reserved <strong>MediFlow ©</strong></p>
         </div>
     </footer>
