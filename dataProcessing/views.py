@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 
 from .ocr import process_pdf
-from mediflowApp.models import Exam
+from exam.models import Exam
 
 def ocr_view(request, id):
     exam = get_object_or_404(Exam, pk=id)
