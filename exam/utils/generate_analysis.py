@@ -1,6 +1,6 @@
 from fpdf import FPDF
 import pypdfium2 as pdfium
-from mediflowApp.models import Ophthalmologist, Patient, Exam
+from ophthalmologist.models import Ophthalmologist
 
 def generate_analysis_pdf(exam, patient, output_file, doctor=Ophthalmologist(name="Martha Luz", last_name="Zuluaga Posada", email="johndoe@example.com", medical_license="RM-5-1382-97", specialty="Oftalmólogo y Corneólogo CES"), logo="media/logo_clinica.png"):
     class PDF(FPDF):
@@ -36,7 +36,7 @@ def generate_analysis_pdf(exam, patient, output_file, doctor=Ophthalmologist(nam
     # Examination Device
     pdf.add_page()
     pdf.cell(150)
-    pdf.cell(0,20, text=f"{exam.apparatus}", align="R")
+    pdf.cell(0,10, text=f"{exam.apparatus}", align="R")
     pdf.ln(20)
 
     # Style line
@@ -44,9 +44,9 @@ def generate_analysis_pdf(exam, patient, output_file, doctor=Ophthalmologist(nam
 
     # Patient name and health provider
     pdf.cell(30)
-    pdf.cell(text=f"PACIENTE: {patient.name} {patient.last_name}",align="L")
+    pdf.cell(0,0,text=f"PACIENTE: {patient.name} {patient.last_name}",align="L")
     pdf.cell(60)
-    pdf.cell(text=f"{patient.health_insurance}", align="R")
+    pdf.cell(0,0,text=f"{patient.health_insurance}", align="R")
     pdf.ln(5)
 
     # Patient ID, age and date

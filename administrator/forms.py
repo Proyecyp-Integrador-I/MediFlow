@@ -1,6 +1,7 @@
 from django import forms
 from .models import *
-from mediflowApp.models import CustomUser
+from .models import CustomUser
+from ophthalmologist.models import Ophthalmologist, Patient
 
 class CustomUserCreationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)

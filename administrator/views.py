@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from .forms import * # Importación de los formularios
 from .forms import *
+from exam.models import Exam
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test

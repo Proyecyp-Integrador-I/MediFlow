@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from mediflowApp.views import *
+from ophthalmologist.models import Patient
+from exam.models import Exam
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -78,7 +79,9 @@ def patientByAge():
 
 def patientByGender():
     male_count = Patient.objects.filter(gender='M').count()
+    male_count += Patient.objects.filter(gender='Male').count()
     female_count = Patient.objects.filter(gender='F').count()
+    female_count += Patient.objects.filter(gender='Female').count()
 
     genders = ['Male', 'Female']
     counts = [male_count, female_count]
