@@ -57,7 +57,7 @@ def search(request):
     searchTerm = request.GET.get('searchPatient', '')
     try:
         search_id = int(searchTerm)
-        files = Exam.objects.filter(patient__id = search_id)
+        files = Exam.objects.filter(patient__identification__icontains = str(search_id))
     except ValueError:
         if searchTerm:
             files = Exam.objects.filter(patient__name__icontains = searchTerm)
