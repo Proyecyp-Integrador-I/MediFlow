@@ -8,6 +8,7 @@ urlpatterns = [
     path('', include('mediflowApp.urls')),  # Incluye URLs de mediflowApp
     path('administrator/', include('administrator.urls')),  # Incluye URLs de administrador
     path('statistics/', include('statistic.urls')),
+    path('dataProcessing/', include('dataProcessing.urls')),
 ]
 
 if settings.DEBUG:
