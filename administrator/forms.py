@@ -16,13 +16,35 @@ class CustomUserCreationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
-    
+
 class AddOphthalmologistForm(forms.ModelForm):
     class Meta:
         model = Ophthalmologist
         fields = ['id', 'name', 'last_name', 'email', 'medical_license', 'specialty']
-    def __init__(self, *args, **kwargs):
-        super(AddOphthalmologistForm, self).__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        # Crear el objeto Ophthalmologist
+        ophthalmologist = super().save(commit=False)
+        
+        if commit:
+            ophthalmologist.save()  # Guardar el oftalmólogo en la BD
+
+            # Crear el usuario asociado al oftalmólogo
+            user = CustomUser(
+                email=ophthalmologist.email,
+                first_name=ophthalmologist.name,
+                last_name=ophthalmologist.last_name,
+                ophthalmologist=ophthalmologist
+            )
+            
+            # Generar la contraseña (por ejemplo, basada en nombre y apellido)
+            raw_password = f"{ophthalmologist.name}{ophthalmologist.last_name}".lower()
+            
+            # Guardar la contraseña de manera segura
+            user.set_password(raw_password)
+            user.save()
+
+        return ophthalmologist
 
 class EditOphthalmologistForm(forms.ModelForm):
     class Meta:

@@ -47,6 +47,8 @@ def logout_view(request):
 
 @login_required
 def home(request):
+    if request.user.is_superuser:
+        return redirect('administrator')
     files = Exam.objects.all() # Filter by user
     return render(request, 'home.html', {'files':files})
 
