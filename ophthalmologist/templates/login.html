@@ -4,76 +4,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <!-- Incluye Bootstrap CSS aquí si no lo tienes ya -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <!-- Incluye Font Awesome CSS si lo necesitas -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        body {
+            background-color: #F8F9FA;
+        }
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .header-footer {
+            background-color: #D3E3F2;
+            text-align: center;
+        }
+        .footer{
+            text-align: left;
+        }
+        .company-name {
+            color: #262D40;
+            font-weight: bold;
+        }
         .main-login {
             margin: 50px auto;
             max-width: 400px;
         }
         .login-button {
             margin-top: 20px;
+            background-color: #6A80C1;
+            border-color: #6A80C1;
+        }
+        .container-form{
+            border: 1px solid gray;
+            width: 500px;
+            border-radius: 20px;
+        }
+        .input-group-addon{
+            border-radius: 20px;
         }
     </style>
+    <title>Login</title>
 </head>
 <body>
-    <div class="container">
-        <div class="row main">
-            <div class="panel-heading col-md-12">
-                <p class="text-center">Inicio de sesión</p>
-            </div>
-            <div class="main-login main-center">
-                <form class="form-horizontal" method="post" action="{% url 'login' %}">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="email" class="cols-sm-2 control-label">Correo Electrónico</label>
-                        <div class="cols-sm-10">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-users fa" aria-hidden="true"></i></span>
-                                {{ form.email }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password" class="cols-sm-2 control-label">Contraseña</label>
-                        <div class="cols-sm-10">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
-                                {{ form.password }}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary btn-lg btn-block login-button">Iniciar sesión</button>
-                    </div>
-                </form>
+    <header class="header-footer py-3">
+        <div class="container">
+            <div class="logo d-flex justify-content-center align-items-center">
+                <img src="/media/logo_app.png" alt="Logo MediFlow" class="img-fluid" style="height: 50px;">
+                <span class="company-name h5 ms-2">MediFlow</span>
             </div>
         </div>
-    </div>
+    </header>
+    <main>
+        <div class="container-form">
+            <div class="row main justify-content-center">
+                <div class="panel-heading col-md-12">
+                    <h2 class="text-center">Log In</h2>
+                </div>
+                <div class="main-login main-center">
+                    <form class="form-horizontal" method="post" action="{% url 'login' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="email" class="cols-sm-2 control-label">E-mail</label>
+                            <div class="cols-sm-10">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-users fa" aria-hidden="true"></i></span>
+                                    {{ form.email }}
+                                </div>
+                            </div>
+                        </div>
 
-    <!-- Modal de error -->
-    <div id="errorModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <!-- Modal contenido -->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Error de Inicio de Sesión</h4>
-                </div>
-                <div class="modal-body">
-                    <p>{{ error_message }}</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                        <div class="form-group">
+                            <label for="password" class="cols-sm-2 control-label">Password</label>
+                            <div class="cols-sm-10">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                                    {{ form.password }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-lg btn-block login-button">Log in</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Incluye jQuery y Bootstrap JS aquí si no los tienes ya -->
+        <!-- Modal de error -->
+        <div id="errorModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal contenido -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Error trying to log in.</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>{{ error_message }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="header-footer py-3 footer">
+        <div class="container-fluid">
+            <p class="mb-0">All rights reserved <strong>MediFlow ©</strong></p>
+        </div>
+    </footer>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <!-- Mostrar modal si hay un mensaje de error -->
