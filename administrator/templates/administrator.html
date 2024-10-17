@@ -80,16 +80,6 @@
 
     {% block title %}Administrator{% endblock %}
 
-    {% block menu %}
-    <li class="nav-item text-body-secondary"><a href="{% url 'new_exam' %}" class="nav-link">Upload Exam</a></li>
-    <li class="nav-item text-body-secondary"><a href="{% url 'new_patient' %}" class="nav-link">Add Patient</a></li>
-    <li class="nav-item text-body-secondary"><a href="{% url 'patient_extraction' %}" class="nav-link">Automated Patient Extraction</a></li>
-    <li class="nav-item text-body-secondary"><a href="{% url 'new_ophthalmologist' %}" class="nav-link">Add Ophthalmologist</a></li>
-    <li class="nav-item text-body-secondary"><a href="{% url 'create_user' %}" class="nav-link">Create User</a></li>
-    <li class="nav-item text-body-secondary"><a href="{% url 'statistics' %}" class="nav-link">Statistics</a></li>
-    <li class="nav-item text-body-secondary"><a href="{% url 'logout' %}" class="nav-link">Logout</a></li>
-    {% endblock %}
-
     {% block content %}
     <div class="container my-4">
         {% if messages %}
@@ -138,11 +128,11 @@
                                     <a href="{% url 'edit_ophthalmologist' doctor.medical_license %}" class="btn btn-edit btn-sm">
                                         Edit
                                     </a>
-                                    <button type="button" class="btn btn-delete btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteOphthalmologistModal" data-doctor-id="{{ doctor.medical_license }}">
+                                    <button type="button" class="btn btn-delete btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteOphthalmologistModal{{ doctor.medical_license }}" data-doctor-id="{{ doctor.medical_license }}">
                                         Delete
                                     </button>
 
-                                    <div class="modal fade" id="confirmDeleteOphthalmologistModal" tabindex="-1" aria-labelledby="confirmDeleteOphthalmologistModalLabel" aria-hidden="true">
+                                    <div class="modal fade" id="confirmDeleteOphthalmologistModal{{ doctor.medical_license }}" tabindex="-1" aria-labelledby="confirmDeleteOphthalmologistModalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header">
@@ -199,29 +189,26 @@
                                                     </svg>
                                                 </a>
                                             </td>
-                                        {% else %}
-                                            <td></td>
-                                            <td></td>
                                         {% endif %}
                                     {% endfor %}
                                 {% else %}
-                                <td></td>
-                                <td></td>
+                                    <td></td>
+                                    <td></td>
                                 {% endif %}
                                 <td>
                                     <a href="{% url 'edit_patient' patient.identification %}" class="btn btn-edit btn-sm">
                                         Edit
                                     </a>
 
-                                    <button type="button" class="btn btn-delete btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeletePatientModal" data-patient-id="{{ patient.identification }}">
+                                    <button type="button" class="btn btn-delete btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeletePatientModal{{ patient.identification }}" data-patient-id="{{ patient.identification }}">
                                         Delete
                                     </button>
 
-                                    <div class="modal fade" id="confirmDeletePatientModal" tabindex="-1" aria-labelledby="confirmDeletePatientModalLabel" aria-hidden="true">
+                                    <div class="modal fade" id="confirmDeletePatientModal{{ patient.identification }}" tabindex="-1" aria-labelledby="confirmDeletePatientModalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="confirmDeletePatientModalLabel">Confirm Deletion</h5>
+                                                    <h5 class="modal-title" id="confirmDeletePatientModalLabel ">Confirm Deletion</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">

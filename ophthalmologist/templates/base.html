@@ -30,16 +30,16 @@
         }
         .custom-collapse {
             position: absolute;
-            top: 65px; /* Ajusta la posición inicial */
-            left: 0; /* Para que se alinee con el botón */
+            top: 65px;
+            left: 0;
             z-index: 1030;
-            max-width: 300px; /* Ancho máximo */
-            border: 1px solid #D3E3F2; /* Borde del menú */
-            border-radius: 3px; /* Esquinas redondeadas */
-            display: none; /* Inicialmente oculto */
+            max-width: 300px;
+            border: 1px solid #D3E3F2;
+            border-radius: 3px;
+            display: none;
         }
         .custom-collapse.show {
-            display: block; /* Mostrar cuando esté activo */
+            display: block;
         }
         .bg-light {
             padding: 10px;
@@ -48,15 +48,15 @@
         li {
             list-style: none;
             padding: 0;
-            margin-bottom: 10px; /* Espacio entre las opciones */
+            margin-bottom: 10px;
         }
         .nav-item {
-            padding: 10px 0; /* Espacio vertical dentro de las opciones */
-            margin: 0; /* Eliminar margen */
-            border-bottom: 1px solid #D3D3D3; /* Línea inferior */
+            padding: 10px 0;
+            margin: 0;
+            border-bottom: 1px solid #D3D3D3;
         }
         .nav-item:last-child {
-            border-bottom: none; /* Quitar línea en la última opción */
+            border-bottom: none;
         }
     </style>
     <title>{% block title %}MediFlow{% endblock %}</title>
@@ -73,8 +73,8 @@
             </nav>
 
             <div class="logo">
-                <img src="/media/logo_app.png" alt="Logo MediFlow" class="img-fluid" style="height: 50px;">
-                <span class="company-name h5 ms-2">MediFlow</span>
+                <a href="{% url 'home' %}" style="text-decoration: none;"><img src="/media/logo_app.png" alt="Logo MediFlow" class="img-fluid" style="height: 50px;">
+                <span class="company-name h5 ms-2">MediFlow</span></a>
             </div>
 
             <div class="usuario d-flex align-items-center">
@@ -86,8 +86,20 @@
 
     <div class="custom-collapse" id="navbarToggleExternalContent" data-bs-theme="light">
         <div class="bg-light p-4">
-            {% block menu %}
-            {% endblock %}
+            {% if request.user.is_staff %}
+                <li class="nav-item text-body-secondary"><a href="{% url 'new_exam' %}" class="nav-link">Upload Exam</a></li>
+                <li class="nav-item text-body-secondary"><a href="{% url 'new_patient' %}" class="nav-link">Add Patient</a></li>
+                <li class="nav-item text-body-secondary"><a href="{% url 'patient_extraction' %}" class="nav-link">Automated Patient Extraction</a></li>
+                <li class="nav-item text-body-secondary"><a href="{% url 'new_ophthalmologist' %}" class="nav-link">Add Ophthalmologist</a></li>
+                <li class="nav-item text-body-secondary"><a href="{% url 'create_user' %}" class="nav-link">Create User</a></li>
+                <li class="nav-item text-body-secondary"><a href="{% url 'statistics' %}" class="nav-link">Statistics</a></li>
+                <li class="nav-item text-body-secondary"><a href="{% url 'logout' %}" class="nav-link">Logout</a></li>
+            {% else %}
+                <li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'new_exam' %}">Upload Exam</a></li>
+                <li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'new_patient' %}">Add Patient</a></li>
+                <li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'patient_extraction' %}">Automated Patient Extraction</a></li>
+                <li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+            {% endif %}
         </div>
     </div>
 

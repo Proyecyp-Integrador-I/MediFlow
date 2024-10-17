@@ -48,13 +48,6 @@
 
     {% block title %}Home{% endblock %}
 
-    {% block menu %}
-    <li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'new_exam' %}">Upload Exam</a></li>
-    <li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'new_patient' %}">Add Patient</a></li>
-    <li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'patient_extraction' %}">Automated Patient Extraction</a></li>
-    <li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
-    {% endblock %}
-
     {% block content %}
     <div class="table-container">
         <div class="col-md-12 table-responsive">

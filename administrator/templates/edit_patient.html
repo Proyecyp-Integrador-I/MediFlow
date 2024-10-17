@@ -28,13 +28,6 @@
 
     {% block title %}Edit Patient{% endblock %}
 
-    {% block menu %}
-    <li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'new_exam' %}">Upload Exam</a></li>
-    <li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'new_patient' %}">Add Patient</a></li>
-    <li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'patient_extraction' %}">Automated Patient Extraction</a></li>
-    <li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
-    {% endblock %}
-
     {% block content %}
     <div class="container my-4 d-flex flex-column align-items-center">
         <h1 class="h3 mb-4 text-center">Edit Patient</h1>
@@ -77,8 +70,7 @@
                 </div>
             </div>
         </div>
-    </div>
-    {% endblock %}
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -86,5 +78,6 @@
             document.getElementById('editPatientForm').submit();
         });
     </script>
+    {% endblock %}
 </body>
 </html>
