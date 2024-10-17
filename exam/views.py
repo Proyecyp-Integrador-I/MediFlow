@@ -107,15 +107,17 @@ def new_exam(request):
             date_of_birth = request.POST.get('patient_DOB', old_patient["date_of_birth"])
             age = request.POST.get('patient_age', old_patient["age"])
             gender = request.POST.get('patient_gender', old_patient["gender"])
+            health_insurance = request.POST.get('patient_health', "")
 
             date = request.POST.get('exam_date', old_exam["date"])
 
             exam_type = request.POST.get('exam_type', old_exam["exam_type"])
             file = old_exam["file"]
+            apparatus = request.POST.get('apparatus', "")
 
-            patient = Patient(name=name, last_name=last_name, identification=identification, age=age, date_of_birth=date_of_birth, gender=gender)
+            patient = Patient(name=name, last_name=last_name, identification=identification, age=age, date_of_birth=date_of_birth, gender=gender, health_insurance=health_insurance)
             patient.save()
-            exam = Exam(patient=patient, exam_date=date, file=file, exam_type=exam_type)
+            exam = Exam(patient=patient, exam_date=date, file=file, exam_type=exam_type, apparatus=apparatus)
             exam.save()
             print(exam.file.url)
 
