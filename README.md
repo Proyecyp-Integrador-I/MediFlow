@@ -1,7 +1,6 @@
 # Mediflow Web Aplication
 
-## How to use it? 
-### Windows
+## How to use it?
 
 1. Create a virtual enviroment
 

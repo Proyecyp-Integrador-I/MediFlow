@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        .table-container{
+            margin: 0 auto;
+            max-width: 90%;
+        }
+
+        .table, .table-responsive, .table-striped {
+            border-radius: 20px;
+            overflow: hidden;
+            border: hidden;
+        }
+
+        th {
+            background-color: #B9D0E8 !important; /* Color de fondo del encabezado */
+        }
+
+        .table th, .table td {
+            border: 1px solid #dee2e6;
+        }
+
+        .table-striped>tbody>tr:nth-child(odd)>td, 
+        .table-striped>tbody>tr:nth-child(odd)>th {
+            background-color: #E7F0F8;
+        }
+
+        .table-striped>tbody>tr:nth-child(even)>td, 
+        .table-striped>tbody>tr:nth-child(even)>th {
+            background-color: #D3E3F2;
+        }
+        
+        .btn-delete{
+            background-color: #414E6E !important;
+            border-color: #414E6E !important;
+            border-radius: 20px !important;
+            color: white !important;
+            width: 40% !important;
+        }
+        .btn-edit{
+            background-color: #839DD1 !important;
+            border-color: #839DD1 !important;
+            border-radius: 20px !important;
+            color: white !important;
+            width: 40% !important;
+        }
+
+        .nav-tabs {
+            border-bottom: 2px solid #B9D0E8; /* Línea inferior más gruesa */
+        }
+
+        .nav-tabs .nav-link {
+            border: none; /* Sin bordes por defecto */
+            border-radius: 20px 20px 0 0; /* Esquinas redondeadas en la parte superior */
+            margin-right: 5px; /* Espacio entre tabs */
+            color: #414E6E; /* Color del texto */
+            background-color: #E7F0F8; /* Fondo por defecto */
+            padding: 10px 15px; /* Espaciado interno */
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: #B9D0E8; /* Color de fondo del tab activo */
+            color: white; /* Color del texto del tab activo */
+            font-weight: bold; /* Negrita para el tab activo */
+        }
+
+        .nav-tabs .nav-link:hover {
+            background-color: #D3E3F2; /* Fondo al pasar el mouse */
+            color: #262D40; /* Color del texto al pasar el mouse */
+        }
+    </style>
+</head>
+<body>
+    {% extends 'base.html' %}
+
+    {% block title %}Administrator{% endblock %}
+
+    {% block content %}
+    <div class="container my-4">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+         <!-- Nav tabs -->
+         <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="ophthalmologists-tab" data-bs-toggle="tab" data-bs-target="#ophthalmologists" type="button" role="tab" aria-controls="ophthalmologists" aria-selected="true">Ophthalmologists</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="patients-tab" data-bs-toggle="tab" data-bs-target="#patients" type="button" role="tab" aria-controls="patients" aria-selected="false">Patients</button>
+            </li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <!-- Ophthalmologists Table -->
+            <div class="tab-pane fade show active" id="ophthalmologists" role="tabpanel" aria-labelledby="ophthalmologists-tab">
+                <div class="table-responsive mt-3">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Doctor's name</th>
+                                <th>Doctor's medical license</th>
+                                <th>Doctor's specialty</th>
+                                <th>Doctor's email</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for doctor in doctors %}
+                            <tr>
+                                <td>{{ doctor.name }} {{ doctor.last_name }}</td>
+                                <td>{{ doctor.medical_license }}</td>
+                                <td>{{ doctor.specialty }}</td>
+                                <td>{{ doctor.email }}</td>
+                                <td>
+                                    <a href="{% url 'edit_ophthalmologist' doctor.medical_license %}" class="btn btn-edit btn-sm">
+                                        Edit
+                                    </a>
+                                    <button type="button" class="btn btn-delete btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteOphthalmologistModal{{ doctor.medical_license }}" data-doctor-id="{{ doctor.medical_license }}">
+                                        Delete
+                                    </button>
+
+                                    <div class="modal fade" id="confirmDeleteOphthalmologistModal{{ doctor.medical_license }}" tabindex="-1" aria-labelledby="confirmDeleteOphthalmologistModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="confirmDeleteOphthalmologistModalLabel">Confirm Deletion</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete the ophthalmologist {{ doctor.name }} {{ doctor.last_name }} with medical license {{ doctor.medical_license }}?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <form method="post" action="{% url 'delete_ophthalmologist' doctor.medical_license %}">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-danger">Confirm</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Patients Table -->
+            <div class="tab-pane fade" id="patients" role="tabpanel" aria-labelledby="patients-tab">
+                <div class="table-responsive mt-3">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Patient's name</th>
+                                <th>Patient's ID</th>
+                                <th>Date of examination</th>
+                                <th>File</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for patient in patients %}
+                            <tr>
+                                <td>{{ patient.name }} {{ patient.last_name }}</td>
+                                <td>{{ patient.identification }}</td>
+
+                                {% if files %}
+                                    {% for file in files %}
+                                        {% if file.patient.identification == patient.identification %}
+                                            <td>{{ file.exam_date }}</td>
+                                            <td style="text-align: center; padding: 0;">
+                                                <a target="_blank" href="{{ file.file.url }}" class="btn btn-link">
+                                                    <svg class="w-[48px] h-[48px] text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M5 17v-5h1.5a1.5 1.5 0 1 1 0 3H5m12 2v-5h2m-2 3h2M5 10V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1v6M5 19v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1M10 3v4a1 1 0 0 1-1 1H5m6 4v5h1.375A1.627 1.627 0 0 0 14 15.375v-1.75A1.627 1.627 0 0 0 12.375 12H11Z" />
+                                                    </svg>
+                                                </a>
+                                            </td>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <td></td>
+                                    <td></td>
+                                {% endif %}
+                                <td>
+                                    <a href="{% url 'edit_patient' patient.identification %}" class="btn btn-edit btn-sm">
+                                        Edit
+                                    </a>
+
+                                    <button type="button" class="btn btn-delete btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeletePatientModal{{ patient.identification }}" data-patient-id="{{ patient.identification }}">
+                                        Delete
+                                    </button>
+
+                                    <div class="modal fade" id="confirmDeletePatientModal{{ patient.identification }}" tabindex="-1" aria-labelledby="confirmDeletePatientModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="confirmDeletePatientModalLabel ">Confirm Deletion</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete the patient {{ patient.name }} {{ patient.last_name }} with ID {{ patient.identification }}?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <form method="post" action="{% url 'delete_patient' patient.identification %}">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-danger">Confirm</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+        <!--Bootstrap-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>

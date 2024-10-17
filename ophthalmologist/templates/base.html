@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            background-color: #F8F9FA;
+            position: relative;
+        }
+        main {
+            flex: 1;
+        }
+        .header-footer {
+            background-color: #D3E3F2;
+        }
+        .company-name {
+            color: #262D40;
+            font-weight: bold;
+        }
+        .navbar {
+            color: #262D40;
+        }
+        .custom-collapse {
+            position: absolute;
+            top: 65px;
+            left: 0;
+            z-index: 1030;
+            max-width: 300px;
+            border: 1px solid #D3E3F2;
+            border-radius: 3px;
+            display: none;
+        }
+        .custom-collapse.show {
+            display: block;
+        }
+        .bg-light {
+            padding: 10px;
+            border-radius: 5px;
+        }
+        li {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 10px;
+        }
+        .nav-item {
+            padding: 10px 0;
+            margin: 0;
+            border-bottom: 1px solid #D3D3D3;
+        }
+        .nav-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+    <title>{% block title %}MediFlow{% endblock %}</title>
+</head>
+<body>
+    <header class="header-footer py-3">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <nav class="navbar">
+                <div class="container-fluid">
+                    <button class="navbar-toggler" type="button" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
+            </nav>
+
+            <div class="logo">
+                <a href="{% url 'home' %}" style="text-decoration: none;"><img src="/media/logo_app.png" alt="Logo MediFlow" class="img-fluid" style="height: 50px;">
+                <span class="company-name h5 ms-2">MediFlow</span></a>
+            </div>
+
+            <div class="usuario d-flex align-items-center">
+                <img src="/media/user_logo.svg" alt="Profile" style="height: 30px;">
+                <span class="ms-2">{{ request.user.get_full_name }}</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="custom-collapse" id="navbarToggleExternalContent" data-bs-theme="light">
+        <div class="bg-light p-4">
+            {% if request.user.is_staff %}
+                <li class="nav-item text-body-secondary"><a href="{% url 'new_exam' %}" class="nav-link">Upload Exam</a></li>
+                <li class="nav-item text-body-secondary"><a href="{% url 'new_patient' %}" class="nav-link">Add Patient</a></li>
+                <li class="nav-item text-body-secondary"><a href="{% url 'patient_extraction' %}" class="nav-link">Automated Patient Extraction</a></li>
+                <li class="nav-item text-body-secondary"><a href="{% url 'new_ophthalmologist' %}" class="nav-link">Add Ophthalmologist</a></li>
+                <li class="nav-item text-body-secondary"><a href="{% url 'create_user' %}" class="nav-link">Create User</a></li>
+                <li class="nav-item text-body-secondary"><a href="{% url 'statistics' %}" class="nav-link">Statistics</a></li>
+                <li class="nav-item text-body-secondary"><a href="{% url 'logout' %}" class="nav-link">Logout</a></li>
+            {% else %}
+                <li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'new_exam' %}">Upload Exam</a></li>
+                <li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'new_patient' %}">Add Patient</a></li>
+                <li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'patient_extraction' %}">Automated Patient Extraction</a></li>
+                <li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+            {% endif %}
+        </div>
+    </div>
+
+    <main class="container my-4">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="header-footer py-3">
+        <div class="container-fluid">
+            <p class="mb-0">All rights reserved <strong>MediFlow ©</strong></p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const toggleButton = document.querySelector('.navbar-toggler');
+        const collapseMenu = document.getElementById('navbarToggleExternalContent');
+
+        toggleButton.addEventListener('click', function() {
+            const isVisible = collapseMenu.classList.toggle('show');
+            const rect = this.getBoundingClientRect();
+            collapseMenu.style.top = `${rect.bottom + 5}px`; // Ajustar 5px más abajo
+            collapseMenu.style.left = `${rect.left}px`;
+
+            // Aseguramos que el menú no tenga un retraso
+            collapseMenu.style.display = isVisible ? 'block' : 'none';
+        });
+
+        // Cerrar el menú si se hace clic fuera de él
+        document.addEventListener('click', function(event) {
+            if (!toggleButton.contains(event.target) && !collapseMenu.contains(event.target)) {
+                collapseMenu.classList.remove('show');
+                collapseMenu.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

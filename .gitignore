@@ -2,3 +2,9 @@
 mediflowApp/migrations/0002_exam_patient_delete_uploadedfile_exam_patient.py
 mediflowApp/migrations/0003_remove_exam_patient.py
 venv/
+db.sqlite3
+media/uploads
+google_auth/
+.venv/
+**/__pycache__/
+!**/migrations/
