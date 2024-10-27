@@ -4,6 +4,9 @@ mediflowApp/migrations/0003_remove_exam_patient.py
 venv/
 db.sqlite3
 media/uploads
+media/results
+media/test_folder
+media/clinic_information
 google_auth/
 .venv/
 **/__pycache__/

@@ -12,6 +12,9 @@ from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
+from media.clinic_information.exam_types import exam_types
+import json
+
 # Create your views here.
 def login_view(request):
     error_message = ""
@@ -122,35 +125,20 @@ def next_exam(request):
 @login_required
 def view_pdf(request, pk):
     exam = get_object_or_404(Exam, pk=pk)
+    exam_types_json = json.dumps(exam_types)
+
     default_analysis = ''
-    if exam.exam_type.lower() == 'nervio óptico' and exam.is_analyzed == True: 
-        default_analysis = '''CONCLUSIONES 
-
-                            1.	Examen con buena confiabilidad en AO. 
-                            2.	Ambos nervios ópticos son normales con excavación aumentada AO.
-                            3.	Grosor normal en la capa de fibras nerviosas en AO con buena simetría AO.  
-                            4.	Grosor normal en la capa de células ganglionares AO. 
-                            5.	Se recomienda hacer correlación con el cuadro clínico del paciente y con otras ayudas diagnósticas.
-                        '''
-    if exam.exam_type.lower() == 'segmento anterior' and exam.is_analyzed == True: 
-        default_analysis = '''CONCLUSIONES 
-
-                            1.	Examen con buena confiabilidad en AO. 
-                            2.	Ambos nervios ópticos son normales con excavación aumentada AO.
-                            3.	Grosor normal en la capa de fibras nerviosas en AO con buena simetría AO.  
-                            4.	Grosor normal en la capa de células ganglionares AO. 
-                            5.	Se recomienda hacer correlación con el cuadro clínico del paciente y con otras ayudas diagnósticas.
-                        '''
     if request.method == 'POST':
         form = UploadFileForm(request.POST, instance=exam)
         if form.is_valid():
             exam.result_analysis = request.POST.get('result_analysis')
+            exam.exam_type = request.POST.get('exam_type').capitalize()
             patient = exam.patient
 
             exam.is_analyzed = True  # Por ejemplo, marcar como analizado una vez se edite
             exam.analysis_date = datetime.now()
             # Crear un PDF con el resultado del análisis
-            pdf_path = f'media/{exam.exam_type}_{patient.name}_{patient.last_name}.pdf'
+            pdf_path = f'media/results/{exam.exam_type}_{patient.name}_{patient.last_name}.pdf'
             generate_analysis_pdf(exam, patient, pdf_path)
             #exam.analyzed_path
 
@@ -162,4 +150,4 @@ def view_pdf(request, pk):
             return redirect('download', path=pk)
     else:
         form = UploadFileForm(instance=exam)
-    return render(request, 'view_pdf.html', {'form': form, 'file': exam, 'default_analysis': default_analysis})
+    return render(request, 'view_pdf.html', {'form': form, 'file': exam, 'exam_types':exam_types_json, default_analysis: default_analysis})

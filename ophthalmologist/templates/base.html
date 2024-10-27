@@ -73,12 +73,12 @@
             </nav>
 
             <div class="logo">
-                <a href="{% url 'home' %}" style="text-decoration: none;"><img src="/media/logo_app.png" alt="Logo MediFlow" class="img-fluid" style="height: 50px;">
+                <a href="{% url 'home' %}" style="text-decoration: none;"><img src="/media/logo_app.jpg" alt="Logo MediFlow" class="img-fluid" style="height: 50px;">
                 <span class="company-name h5 ms-2">MediFlow</span></a>
             </div>
 
             <div class="usuario d-flex align-items-center">
-                <img src="/media/user_logo.png" alt="Profile" style="height: 30px;">
+                <!-- <img src="/media/user_logo.png" alt="Profile" style="height: 30px;"> -->
                 <span class="ms-2">{{ request.user.get_full_name }}</span>
             </div>
         </div>
@@ -89,6 +89,7 @@
             {% if request.user.is_staff %}
                 <li class="nav-item text-body-secondary"><a href="{% url 'new_exam' %}" class="nav-link">Upload Exam</a></li>
                 <li class="nav-item text-body-secondary"><a href="{% url 'new_patient' %}" class="nav-link">Add Patient</a></li>
+                <li class="nav-item text-body-secondary"><a href="{% url 'bulk_insertion' %}" class="nav-link">Bulk Insertion of Exams</a></li>
                 <li class="nav-item text-body-secondary"><a href="{% url 'patient_extraction' %}" class="nav-link">Automated Patient Extraction</a></li>
                 <li class="nav-item text-body-secondary"><a href="{% url 'new_ophthalmologist' %}" class="nav-link">Add Ophthalmologist</a></li>
                 <li class="nav-item text-body-secondary"><a href="{% url 'create_user' %}" class="nav-link">Create User</a></li>
@@ -97,6 +98,7 @@
             {% else %}
                 <li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'new_exam' %}">Upload Exam</a></li>
                 <li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'new_patient' %}">Add Patient</a></li>
+                <li class="nav-item text-body-secondary"><a href="{% url 'bulk_insertion' %}" class="nav-link">Bulk Insertion of Exams</a></li>
                 <li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'patient_extraction' %}">Automated Patient Extraction</a></li>
                 <li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
             {% endif %}
