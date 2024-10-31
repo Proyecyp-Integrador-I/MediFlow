@@ -12,6 +12,8 @@ from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
+from exam.utils.text_extraction import add_excel_info
+
 from media.clinic_information.exam_types import exam_types
 import json
 
@@ -86,23 +88,28 @@ def new_patient(request):
 
 @login_required
 def automated_patient_extraction(request):
+    
+    Patient.objects.all().delete()
+    Exam.objects.all().delete()
     if request.method == 'POST':
         try:
             patient_list = request.FILES.get('patient_list')
-            df = pd.read_excel(patient_list)
 
-            df.columns = df.columns.str.strip()
-            for index, row in df.iterrows():
-                print(index)
-                existing_patient = Patient.objects.filter(identification=row['Identificación']).exists()
-                if not existing_patient:
-                    patient = Patient(
-                        name=row['Nombre del paciente'],
-                        last_name="",
-                        identification=row['Identificación'],
-                        age=row['Edad'],
-                        health_insurance=row['Entidad'])
-                    patient.save()
+            add_excel_info(patient_list)
+#            df = pd.read_excel(patient_list)
+#
+#            df.columns = df.columns.str.strip()
+#            for index, row in df.iterrows():
+#                print(index)
+#                existing_patient = Patient.objects.filter(identification=row['Identificación']).exists()
+#                if not existing_patient:
+#                    patient = Patient(
+#                        name=row['Nombre del paciente'],
+#                        last_name="",
+#                        identification=row['Identificación'],
+#                        age=row['Edad'],
+#                        health_insurance=row['Entidad'])
+#                    patient.save()
         except Exception as e:
             return render(request, 'automated_extraction.html', {'error': "Error al procesar el archivo"})
 

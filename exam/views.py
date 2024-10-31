@@ -205,7 +205,7 @@ def bulk_insertion(request):
                     exam.save()
                     print(exam)
         
-        add_excel_info(csv_file)
+        #add_excel_info(csv_file)
 
         print(failed_patients)
         return redirect("home") # Redirigir a una página de éxito

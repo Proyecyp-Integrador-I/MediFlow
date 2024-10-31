@@ -9,58 +9,59 @@ from exam.models import Patient
 
 
 def text_extraction(file_content):
-        with pdfplumber.open(io.BytesIO(file_content)) as pdf:
-            first_page = pdf.pages[0]
-            text = first_page.extract_text()
-            id = re.search("(?<=ID:)\s?[0-9]*", text)
-            name = re.search("(?<=Name:)\s?.* .*, \w+|(?<=Nombre:)\s?.* .*, .*?(?=OD|OS)", text)
-            birthdate = re.search("(?<=DOB:)\s?..-...-..|(?<=Fecha de nacimiento:)\s?[0-9]{1,2}/[0-9]{2}/[0-9]{4}", text)
-            exam_date = re.search("(?<=Exam Date:)\s?..-...-..|(?<=Fecha de examen:)\s?[0-9]{1,2}/[0-9]{2}/[0-9]{4}", text)
-            gender = re.search("(?<=Gender:)\s?\w+|(?<=Sexo:)\s?\w+", text)
-            name = name.group().strip() if name else ''
-            id = id.group().strip() if id else ''
-            birthdate = birthdate.group().strip() if birthdate else ''
-            exam_date = exam_date.group().strip() if exam_date else ''
-            gender = gender.group().strip().capitalize() if gender else ''
+    with pdfplumber.open(io.BytesIO(file_content)) as pdf:
+        first_page = pdf.pages[0]
+        text = first_page.extract_text()
+        id = re.search("(?<=ID:)\s?[0-9]*", text)
+        name = re.search("(?<=Name:)\s?.* .*, \w+|(?<=Nombre:)\s?.* .*, .*?(?=OD|OS)", text)
+        birthdate = re.search("(?<=DOB:)\s?..-...-..|(?<=Fecha de nacimiento:)\s?[0-9]{1,2}/[0-9]{2}/[0-9]{4}", text)
+        exam_date = re.search("(?<=Exam Date:)\s?..-...-..|(?<=Fecha de examen:)\s?[0-9]{1,2}/[0-9]{2}/[0-9]{4}", text)
+        gender = re.search("(?<=Gender:)\s?\w+|(?<=Sexo:)\s?\w+", text)
+        name = name.group().strip() if name else ''
+        id = id.group().strip() if id else ''
+        birthdate = birthdate.group().strip() if birthdate else ''
+        exam_date = exam_date.group().strip() if exam_date else ''
+        gender = gender.group().strip().capitalize() if gender else ''
 
+        try:
+            birthdate = datetime.datetime.strptime(birthdate, '%d-%b-%y').date() if birthdate else ''
+            exam_date = datetime.datetime.strptime(exam_date, '%d-%b-%y').date() if exam_date else ''
+        except:
             try:
-                birthdate = datetime.datetime.strptime(birthdate, '%d-%b-%y').date() if birthdate else ''
-                exam_date = datetime.datetime.strptime(exam_date, '%d-%b-%y').date() if exam_date else ''
+                birthdate = datetime.datetime.strptime(birthdate, '%d/%m/%Y').date() if birthdate else ''
+                exam_date = datetime.datetime.strptime(exam_date, '%d/%m/%Y').date() if exam_date else ''
             except:
-                try:
-                    birthdate = datetime.datetime.strptime(birthdate, '%d/%m/%Y').date() if birthdate else ''
-                    exam_date = datetime.datetime.strptime(exam_date, '%d/%m/%Y').date() if exam_date else ''
-                except:
-                    birthdate = ''
-                    exam_date = ''
+                birthdate = ''
+                exam_date = ''
 
-            last_name = name.split(", ")[0].strip().capitalize() if name else ''
-            last_name = ' '.join(word.capitalize() for word in last_name.split())
+        last_name = name.split(", ")[0].strip().capitalize() if name else ''
+        last_name = ' '.join(word.capitalize() for word in last_name.split())
 
-            name = name.split(", ")[1].strip().capitalize() if name else ''
-            name = ' '.join(word.capitalize() for word in name.split() if word != 'de' or word != 'la' or word != 'del')
+        name = name.split(", ")[1].strip().capitalize() if name else ''
+        name = ' '.join(word.capitalize() for word in name.split() if word != 'de' or word != 'la' or word != 'del')
 
-            return {
-                "id": id,
-                "name": name,
-                "last_name": last_name,
-                "birthdate": birthdate,
-                "exam_date": exam_date,
-                "gender": gender
-            }
+        return {
+            "id": id,
+            "name": name,
+            "last_name": last_name,
+            "birthdate": birthdate,
+            "exam_date": exam_date,
+            "gender": gender
+        }
         
 def extract_multiple(files):
     extracted_data = {"id":set(), "name":set(), "last_name":set(), "birthdate":set(), "exam_date":set(), "gender":set()}
     for file in files:
-        file_data = text_extraction(file.read())
-        #print(file_data)
+        if file.name.lower().endswith('.pdf'):
+            file_data = text_extraction(file.read())
+            #print(file_data)
 
-        extracted_data["id"].add(file_data["id"]) if file_data["id"] != '' else None
-        extracted_data["name"].add(file_data["name"]) if file_data["name"] != '' else None
-        extracted_data["last_name"].add(file_data["last_name"]) if file_data["last_name"] != '' else None
-        extracted_data["birthdate"].add(file_data["birthdate"]) if file_data["birthdate"] != '' else None
-        extracted_data["exam_date"].add(file_data["exam_date"]) if file_data["exam_date"] != '' else None
-        extracted_data["gender"].add(file_data["gender"]) if file_data["gender"] != '' else None
+            extracted_data["id"].add(file_data["id"]) if file_data["id"] != '' else None
+            extracted_data["name"].add(file_data["name"]) if file_data["name"] != '' else None
+            extracted_data["last_name"].add(file_data["last_name"]) if file_data["last_name"] != '' else None
+            extracted_data["birthdate"].add(file_data["birthdate"]) if file_data["birthdate"] != '' else None
+            extracted_data["exam_date"].add(file_data["exam_date"]) if file_data["exam_date"] != '' else None
+            extracted_data["gender"].add(file_data["gender"]) if file_data["gender"] != '' else None
         
     #print(extracted_data)
     for key, value in extracted_data.items():
@@ -79,7 +80,8 @@ def concatenate_pdf(files, output_path):
 
     # Iterate through the PDF files
     for file in files:
-        merger.append(file)
+        if file.name.lower().endswith('.pdf'):
+            merger.append(file)
 
     # Save the output concatenated PDF
     with open(output_path, "wb") as output_pdf:
