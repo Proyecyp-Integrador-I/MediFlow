@@ -1,0 +1,216 @@
+main{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.messages {
+    padding: 5px;
+    position: absolute;
+    top: 90px;
+    right: 20px;
+}
+
+.alert {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #fff;
+}
+
+.alert-success {
+    background-color: #4CAF50;
+    border-left: 5px solid #388E3C;
+}
+
+.alert-error {
+    background-color: #F44336;
+    border-left: 5px solid #D32F2F;
+}
+
+.alert-warning {
+    background-color: #FF9800;
+    border-left: 5px solid #F57C00;
+}
+
+.alert-info {
+    background-color: #2196F3;
+    border-left: 5px solid #1976D2;
+}
+
+.alert a {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.alert:hover {
+    opacity: 0.9;
+}
+
+.search-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-right: 20px;
+}
+
+.search-bar{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+}
+
+.search-container h1{
+    margin-left: auto;
+}
+
+.search-container p{
+    margin-right: 10px;
+}
+
+.search-container input{
+    border-radius: 8px;
+    border: 1px solid rgb(172, 172, 172);
+    height: 20px;
+}
+
+.table-container{
+    display: flex;
+    flex-direction: column;
+    margin-top: 60px;
+    border-radius: 20px;
+    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.30);
+    border: 1px solid rgb(197, 197, 197);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.table-container:not(.hidden) {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+}
+
+table{
+    border-spacing: 0;
+}
+
+thead{
+    background-color: #B9CFE8;
+}
+
+th{
+    height: 40px;
+    width: 200px;
+    padding: 5px;
+}
+
+td{
+    background-color: #E7F0F8;
+    height: 40px;
+    padding: 5px;
+    text-align: center;
+}
+
+tr:nth-child(odd) td {
+    background-color: #E7F0F8;
+}
+
+tr:nth-child(even) td {
+    background-color: #D3E2F2;
+}
+
+.pdf-icon{
+    height: 30px;
+    width: 30px;
+}
+
+.analyzed, .pending{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    gap: 2%;
+}
+
+.analyzed svg path{
+    fill: #388E3C;
+    fill-opacity: 1;
+}
+
+.pending svg path{
+    fill: #ca841a;
+    fill-opacity: 1;
+}
+
+.btn-analysis{
+    border: none;
+    height: 29px;
+    border-radius: 18px;
+    color: #eeeded;
+    cursor: pointer;
+    background-color: #4A5989;
+    padding: 8px 15px;
+    text-wrap: nowrap;
+}
+
+.btn-analysis:hover{
+    background-color: #262d40;
+    transition: background-color 0.3s;
+}
+
+.pagination{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.previous{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+}
+
+.previous-link, .first-link{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+}
+
+.current{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    width: 100px;
+}
+
+.next{
+    display: flex;
+}
+
+.next-link, .last-link{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+}
+
+.previous-link:hover, .first-link:hover,
+.next-link:hover, .last-link:hover{
+    color: #4A5989;
+}
+
+@media (max-width: 864px){
+    .edit-btn, .delete-btn{
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+    .logo-name{
+        display: none;
+    }
+}

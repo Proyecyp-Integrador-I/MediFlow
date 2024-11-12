@@ -11,6 +11,7 @@ from datetime import datetime
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from django.core.paginator import Paginator
 
 from exam.utils.text_extraction import add_excel_info
 
@@ -21,7 +22,7 @@ import json
 def login_view(request):
     error_message = ""
     if request.method == 'POST':
-        error_message = "Dirección de correo o contraseña incorrectos."
+        error_message = "Invalid e-mail or password. Please verify and try again."
         form = LoginForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
@@ -33,11 +34,7 @@ def login_view(request):
             if user is not None:
                 auth_login(request, user)
 
-                # Verificamos si es staff o superuser
-                if user.is_superuser or user.is_staff:
-                    return redirect('/administrator')  # Redirige a la vista del administrador
-                else:
-                    return redirect('/')  # Redirige al home o vista regular
+                return redirect('menu')  # Redirige al home o vista regular
             else:
                 return render(request, 'login.html', {'form': form, 'error_message': error_message})
     else:
@@ -51,26 +48,48 @@ def logout_view(request):
 
 
 @login_required
-def home(request):
+def view_patients(request):
     if request.user.is_superuser:
         return redirect('administrator')
-    files = Exam.objects.all() # Filter by user
-    return render(request, 'home.html', {'files':files})
-
-@login_required
-def search(request):
-    searchTerm = request.GET.get('searchPatient', '')
+    
+    searchPatient = request.GET.get('searchPatient', '')
     try:
-        search_id = int(searchTerm)
-        files = Exam.objects.filter(patient__identification__icontains = str(search_id))
-    except ValueError:
-        if searchTerm:
-            files = Exam.objects.filter(patient__name__icontains = searchTerm)
-            if not files:
-                files = Exam.objects.filter(patient__last_name__icontains = searchTerm)
-        else:
-            files = Exam.objects.all()
-    return render(request, 'home.html', {'searchTerm':searchTerm, 'files':files})
+        doctor = request.user.ophthalmologist
+    except AttributeError:
+        doctor = None
+
+    if doctor:
+        print(request.user)  # Esto debería mostrar el objeto CustomUser
+        print(type(request.user))
+        patients = search(searchPatient, doctor)
+    else:
+        patients = []
+    paginator_patients = Paginator(patients, 10)
+    files = Exam.objects.all()
+    page_number = request.GET.get('page')
+    page_patients = paginator_patients.get_page(page_number)
+    return render(request, 'view_patients.html', {'files':files, 'patients': patients, 'searchPatient': searchPatient, 'page_patients': page_patients,})
+
+def search(searchPatient, doctor):
+    if not doctor:
+        return Patient.objects.none()
+
+    if searchPatient:
+        try:
+            search_id = int(searchPatient)
+            patients = Patient.objects.filter(identification__icontains=str(search_id), doctor=doctor)
+        except ValueError:
+            patients = Patient.objects.filter(
+                name__icontains=searchPatient, doctor=doctor
+            )
+            if not patients.exists():
+                patients = Patient.objects.filter(
+                    last_name__icontains=searchPatient, doctor=doctor
+                )
+    else:
+        patients = Patient.objects.filter(doctor=doctor)
+
+    return patients
 
 @login_required
 def new_patient(request):
@@ -79,7 +98,7 @@ def new_patient(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Patient created successfully!')
-            return redirect("home") # Redirigir a una página de éxito
+            return redirect("menu") # Redirigir a una página de éxito
         else:
             messages.error(request, 'Something went wrong. Please verify and try again.')
     else:
@@ -113,7 +132,7 @@ def automated_patient_extraction(request):
         except Exception as e:
             return render(request, 'automated_extraction.html', {'error': "Error al procesar el archivo"})
 
-        return redirect("home") # Redirigir a una página de éxito
+        return redirect("menu") # Redirigir a una página de éxito
     else:
         return render(request, 'automated_extraction.html', {'error': ""})
 
@@ -125,7 +144,7 @@ def next_exam(request):
         if next_exam:
             return redirect('view_pdf', pk=next_exam.id)
         else:
-            return redirect('home')
+            return redirect('view_patients')
     else:
         return render(request, 'next_exam.html')
 
@@ -146,7 +165,7 @@ def view_pdf(request, pk):
             exam.analysis_date = datetime.now()
             # Crear un PDF con el resultado del análisis
             pdf_path = f'media/results/{exam.exam_type}_{patient.name}_{patient.last_name}.pdf'
-            generate_analysis_pdf(exam, patient, pdf_path)
+            generate_analysis_pdf(exam, patient, pdf_path, patient.doctor)
             #exam.analyzed_path
 
             exam.save()
@@ -154,7 +173,15 @@ def view_pdf(request, pk):
             response['Content-Disposition'] = 'inline; filename=' + os.path.basename(pdf_path)
             return response """
 
-            return redirect('download', path=pk)
+            messages.success(request, 'Analysis saved successfully!')
+
+            return redirect('view_patients')
     else:
         form = UploadFileForm(instance=exam)
     return render(request, 'view_pdf.html', {'form': form, 'file': exam, 'exam_types':exam_types_json, default_analysis: default_analysis})
+
+def menu(request):
+    return render(request, 'menu.html')
+
+def about(request):
+    return render(request, 'about.html')

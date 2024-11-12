@@ -1,0 +1,126 @@
+main{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.content-wrapper{
+    display: flex;
+    width: 100%;
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.pdf-container{
+    flex: 1.5;
+}
+
+.pdf-container object{
+    height: 100%;
+}
+
+.form-wrapper{
+    flex: 1;
+}
+
+.form-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+}
+
+.patient-data, .exam-data{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding: 20px;
+    text-align: left;
+    border-radius: 20px;
+    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.30);
+    border: 1px solid rgb(197, 197, 197);
+}
+
+.patient-data label, .exam-data label {
+    width: 100%;
+    margin-bottom: 5px;
+    text-align: left;
+    font-weight: bold;
+}
+
+.patient-data input,
+.patient-data textarea,
+.exam-data input,
+.exam-data textarea {
+    font-family: "Roboto", sans-serif, "Arial";
+    width: 100%;
+    height: 25px;
+    border-radius: 10px;
+    border: 1px solid rgb(143, 143, 143);
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.patient-data select{
+    height: 40px;
+    width: 102%;
+    border-radius: 10px;
+    border: 1px solid rgb(143, 143, 143);
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.patient-data input:focus,
+.patient-data select:focus,
+.exam-data input:focus{
+    border: 1px solid #4a5a89;
+    outline: none;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+.btn-container{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.save-btn{
+    width: 50%;
+    padding: 13px 10px;
+    border-radius: 20px;
+    margin-top: 20px;
+    border: none;
+    background-color: #4a5a89;
+    color: #eeeded;
+    cursor: pointer;
+}
+
+.save-btn:hover{
+    background-color: #262d40;
+    transition: background-color 0.3s;
+}
+
+@media (max-width: 1490px){
+    .content-wrapper{
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .pdf-container {
+        flex: 1;
+        height: auto;
+        margin-bottom: 50px;
+    }
+
+    .pdf-container object {
+        height: 1000px;
+    }
+
+    .patient-data select{
+        width: 101%;
+    }
+}

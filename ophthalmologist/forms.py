@@ -7,13 +7,13 @@ from django.contrib.auth.forms import AuthenticationForm
 class LoginForm(forms.Form):
     email = forms.CharField(max_length=255, widget=forms.TextInput(attrs={
         'class': 'form-control',
-        'placeholder': 'Ingresa tu nombre de usuario',
+        'placeholder': 'Enter your email address',
         'id': 'username',
         'name': 'username'
     }))
     password = forms.CharField(widget=forms.PasswordInput(attrs={
         'class': 'form-control',
-        'placeholder': 'Ingresa tu contraseña',
+        'placeholder': 'Enter your password',
         'id': 'password',
         'name': 'password'
     }))

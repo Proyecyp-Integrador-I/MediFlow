@@ -1,0 +1,146 @@
+header, .logo-container, .logo,
+.logo-name, .user-container, footer,
+.user-logo, .body-container, .return
+{
+    display: flex;
+}
+
+html, body{
+    font-family: "Roboto", sans-serif, "Arial";
+    color: #0e0e0eec;
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+.body-container{
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main{
+    flex: 1;
+    padding: 30px;
+}
+
+a{
+    color: #0e0e0eec;
+    text-decoration: none;
+    height: 50px;
+}
+
+header{
+    justify-content: space-between;
+    align-items: center;
+    background-color: #D3E2F2;
+    height: 70px;
+    width: 100%;
+}
+
+.return{
+    padding-left: 15px;
+    align-items: center;
+}
+
+.logo-container{
+    height: 100%;
+    align-items: center;
+}
+
+.logo{
+    align-items: center;
+    height: 50px;
+}
+
+.logo img{
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+}
+
+.logo-name{
+    margin-left: 10px;
+    font-weight: 500;
+    font-size: 20px;
+    align-items: center;
+}
+
+.user-container{
+    padding-right: 15px;
+    align-items: center;
+    cursor: pointer;
+}
+
+.user-logo{
+    background-color: #414e6e;
+    height: 34px;
+    width: 34px;
+    border-radius: 17px;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
+
+.user-name{
+    margin-left: 10px;
+}
+
+.user-dropdown {
+    display: none;
+    position: absolute;
+    top: 58px;
+    right: 0px;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    width: 170px;
+    z-index: 1000;
+}
+
+.user-dropdown ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.user-dropdown ul li a {
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    text-decoration: none;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+}
+
+.user-dropdown ul li a:hover {
+    background-color: #f0f0f0;
+}
+
+footer {
+    background-color: #D3E2F2;
+    height: 50px;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.1px;
+}
+
+.footer-rights{
+    margin-left: 10px;
+}
+
+.footer-name{
+    align-self: flex-end;
+    margin-left: 5px;
+    font-weight: 500;
+}
+
+.about{
+    margin-left: auto;
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+.about:hover{
+    color: #262d40;
+}

@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import CustomUserCreationForm
+from django.core.paginator import Paginator
 
 # Función de prueba para verificar si el usuario es superusuario o staff
 def is_superuser_or_staff(user):
@@ -19,7 +20,7 @@ def create_user(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('administrator')  
+            return redirect('menu')  
     else:
         form = CustomUserCreationForm()
 
@@ -27,15 +28,19 @@ def create_user(request):
     
 @user_passes_test(is_superuser_or_staff)
 def administrator(request):
-    patients = Patient.objects.all()
-    files = Exam.objects.all() # Filter by user
-    doctors = Ophthalmologist.objects.all()
-    searchTerm = request.GET.get('searchPatient')
-    if searchTerm:
-        patients = Patient.objects.filter(name__icontains='searchTerm')
-    else:
-        patients = Patient.objects.all()
-    return render(request, 'administrator.html', {'patients': patients, 'files': files, 'doctors': doctors, 'searchTerm':searchTerm})
+    searchDoctor = request.GET.get('searchDoctor', '')
+    doctors = search_doctor(searchDoctor)
+    searchPatient = request.GET.get('searchPatient', '')
+    patients = search_patient(searchPatient)
+    paginator_patients = Paginator(patients, 10)
+    files = Exam.objects.all()
+    paginator_doctors = Paginator(doctors, 10)
+    page_number = request.GET.get('page')
+    page_patients = paginator_patients.get_page(page_number)
+    page_doctors = paginator_doctors.get_page(page_number)
+    return render(request, 'administrator.html', {'patients': patients, 'files': files, 
+    'doctors': doctors, 'serachDoctor': searchDoctor, 'searchPatient': searchPatient, 
+    'page_patients': page_patients, 'page_doctors': page_doctors})
 
 @user_passes_test(is_superuser_or_staff)
 def new_ophthalmologist(request):
@@ -54,7 +59,7 @@ def new_ophthalmologist(request):
 @user_passes_test(is_superuser_or_staff)
 def delete_ophthalmologist(request, medical_license):
     if request.method == 'POST':
-        ophthalmologist = Ophthalmologist.objects.filter(medical_license=medical_license).first()
+        ophthalmologist = Ophthalmologist.objects.get(medical_license=medical_license)
         if ophthalmologist:
             ophthalmologist.delete()
             messages.success(request, f'Ophthalmologist with medical license {medical_license} deleted successfully!')
@@ -110,3 +115,29 @@ def edit_patient(request, identification):
         form = EditPatientForm(instance=patient)
     
     return render(request, 'edit_patient.html', {'form': form})
+
+def search_patient(searchPatient):
+    try:
+        search_id = int(searchPatient)
+        patients = Patient.objects.filter(identification__icontains = str(search_id))
+    except ValueError:
+        if searchPatient:
+            patients = Patient.objects.filter(name__icontains = searchPatient)
+            if not patients:
+                patients = Patient.objects.filter(last_name__icontains = searchPatient)
+        else:
+            patients = Patient.objects.all()
+    return patients
+
+def search_doctor(searchDoctor):
+    try:
+        search_id = int(searchDoctor)
+        doctors = Ophthalmologist.objects.filter(medical_license__icontains = str(search_id))
+    except ValueError:
+        if searchDoctor:
+            doctors = Ophthalmologist.objects.filter(name__icontains = searchDoctor)
+            if not doctors:
+                doctors = Ophthalmologist.objects.filter(last_name__icontains = searchDoctor)
+        else:
+            doctors = Ophthalmologist.objects.all()
+    return doctors

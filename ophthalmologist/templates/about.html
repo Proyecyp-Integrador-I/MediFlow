@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'styles/back_button.css' %}">
+<link rel="stylesheet" href="{% static 'styles/about.css' %}">
+{% endblock %}
+
+{% block title %}Mediflow - Administrator{% endblock %}
+
+{% block return %}
+<a href="{% url 'menu' %}" class="back-link">
+    <button class="back-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M7 12L15 4L17.2 6.1L11.3 12L17.2 17.9L15 20L7 12Z" fill="#1C2E45" fill-opacity="0.6"/>
+        </svg>
+        Back
+    </button>
+</a>
+{% endblock %}
+
+{% block content %}
+
+<div class="title">
+    <h1>About MediFlow</h1>
+</div>
+
+<div class="container container1">
+    <img src="/media/about/blue_eye.jpg">
+    <div class="content">
+        <h1>What is MediFlow?</h1>
+        <p>MediFlow is a web application designed to help ophthalmologists significantly speed up their process of analyzing Optical Coherence Tomographies (OCTs), 
+            saving valuable time and reducing errors.</p>
+    </div>
+</div>
+
+<div class="container container2">
+    <div class="content">
+        <h1>But... Why is it faster?</h1>
+        <p>MediFlow allows ophthalmologists to upload their patients' test results, automatically extracting the patient's information and saving it to our database. 
+            Once a patient is created, with just a few clicks, you can view their test result, analyze it, and send it via email.</p>
+    </div>
+    <img src="/media/about/fast.jpg">
+</div>
+
+<div class="container container3">
+    <img src="/media/about/doctor_working.jpg">
+    <div class="content">
+        <h1>How is it different from the current process?</h1>
+        <p>The traditional process involves obtaining the exam's PDF file, writing the analysis in a text editor, transcribing the analysis into the patient's clinical record, 
+            and then sending the patient an email with the exam result and a copy of their medical record. With MediFlow, the process is streamlined and fully integrated: upload the file, 
+            write your analysis, and send the analyzed exam via email with just one click. It's that simple.</p>
+    </div>
+</div>
+
+<div class="container container4">
+    <div class="content">
+        <h1>Did you know...</h1>
+        <p>The traditional process takes an average of 10 minutes per exam. With MediFlow, the average analysis time is just 2 minutes. That's a 
+            <span>5x</span> increase in productivity!</p>
+    </div>
+    <img src="/media/about/speed.jpg">
+</div>
+
+<div class="container container5">
+    <img src="/media/about/rocket.jpg">
+    <div class="content">
+        <h1>Ready to boost your productivity?</h1>
+        <p>Start using MediFlow today and experience the difference for yourself!</p>
+    </div>
+</div>
+
+
+{% endblock %}

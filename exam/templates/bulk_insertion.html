@@ -1,87 +1,147 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload a New Exam</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        input[type="file"] {
-            border-radius: 10px;
-            border: 1px solid gray;
-        }
-        .form-wrapper {
-            border: 1px solid gray;
-            padding: 20px;
-            border-radius: 10px;
-            background-color: white;
-            width: 500px;
-        }
-        .btn-upload {
-            background-color: #6A80C1 !important;
-            border-color: #6A80C1 !important;
-        }
-    </style>
-</head>
-<body>
-    {% extends 'base.html' %}
+{% extends 'base.html' %}
+{% load static %}
 
-    {% block title %}Upload Multiple New Exams{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'styles/bulk_exam.css' %}">
+<link rel="stylesheet" href="{% static 'styles/back_button.css' %}">
+<link rel="stylesheet" href="{% static 'styles/modal.css' %}">
+{% endblock %}
 
-    {% block content %}
+{% block title %}Upload Multiple New Exams{% endblock %}
 
-    <div class="container my-4 d-flex flex-column align-items-center">
-        {% if messages %}
-            <ul class="messages mb-3">
-                {% for message in messages %}
-                    <li{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-        <h1 class="h3 mb-4 text-center">Upload a New Exam</h1>
-        <p>Upload a folder where each subfolder corresponds to a patient with his exams on pdf.</p>
-        <div class="form-wrapper">
-            <form id="add-exams" method="post" action='/exam/bulk-insertion' enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label for="examFolders" class="form-label">Select Folders</label>
-                    <input class="form-control" type="file" id="examFolders" name="examFolders" webkitdirectory multiple required>
-                </div>
-                <div class="mb-3">
-                    <label for="patientCSV" class="form-label">Select CSV with programming</label>
-                    <input class="form-control" type="file" id="patientCSV" name="patientCSV" accept=".xlsx, .xls" required>
-                </div>
-                <button type="submit" name="new_exams" class="btn btn-upload btn-primary mt-3 w-100">Upload</button>
-            </form>
-        </div>
+{% block return %}
+<a href="{% url 'menu' %}" class="back-link">
+    <button class="back-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M7 12L15 4L17.2 6.1L11.3 12L17.2 17.9L15 20L7 12Z" fill="#1C2E45" fill-opacity="0.6"/>
+        </svg>
+        Back
+    </button>
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Upload Multiple Exams</h1>
+    <p>Upload a folder where each subfolder has a patient with their exams in PDF format.</p>
+    
+    <div class="form-container">
+        <form id="add-exams" method="post" action='/exam/bulk-insertion' enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Upload Area (drag and drop) -->
+            <div class="upload-area" id="uploadArea">
+                <label for="examFolders">Drag and drop your folder here, or click to select folders</label>
+                <input class="custom-file-input" type="file" id="examFolders" name="examFolders" webkitdirectory multiple required>
+                <div id="fileName" class="file-name"></div>
+            </div>
+
+            <h1>Or</h1>
+            <p>Select CSV with programming.</p>
+
+            <!-- Select CSV file -->
+            <div class="upload-area" id="uploadArea">
+                <label for="exampatientCSV">Drag and drop your file here, or click to select files</label>
+                <input class="custom-file-input" type="file" id="patientCSV" name="patientCSV" accept=".xlsx, .xls" multiple required>
+                <div id="fileName" class="file-name"></div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" name="new_exams" class="upload-btn" id="uploadBtn" disabled>Upload</button>
+        </form>
     </div>
-    <script>;
-        document.getElementById('add-exams').addEventListener('submit', function(event) {
-            alert('Form is being submitted');
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('examFolders');
+    const fileNameDisplay = document.getElementById('fileName');
+    const uploadForm = document.getElementById('add-exams');
+    const uploadBtn = document.getElementById('uploadBtn');
+
+    // Click event to trigger file selection
+    uploadArea.addEventListener('click', function() {
+        fileInput.click();
+    });
+
+    // Drag over event to show dragover state
+    uploadArea.addEventListener('dragover', function(event) {
+        event.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+
+    // Drag leave event to remove dragover state
+    uploadArea.addEventListener('dragleave', function() {
+        uploadArea.classList.remove('dragover');
+    });
+
+    // Drop event to handle file drop
+    uploadArea.addEventListener('drop', function(event) {
+        event.preventDefault();
+        uploadArea.classList.remove('dragover');
+        
+        const files = event.dataTransfer.files;
+        fileInput.files = files;
+        handleFileSelection(files);
+    });
+
+    // Change event for file input
+    fileInput.addEventListener('change', function() {
+        const files = fileInput.files;
+        handleFileSelection(files);
+    });
+
+    // Function to handle file selection and extract folder name
+    function handleFileSelection(files) {
+        if (files.length > 0) {
+            const folderName = getFolderName(files);
+            fileNameDisplay.textContent = `Selected folder: ${folderName}`;
+            uploadBtn.disabled = false;
+        } else {
+            fileNameDisplay.textContent = '';
+            uploadBtn.disabled = true;
+        }
+    }
+
+    // Function to extract folder name from webkitRelativePath
+    function getFolderName(files) {
+        const firstFilePath = files[0].webkitRelativePath;
+        const folderPath = firstFilePath.split('/').slice(0, -1).join('/');
+        const folderName = folderPath.split('/').pop(); // Get the last segment of the path
+        return folderName;
+    }
+
+    // Prevent form submission if no files are selected
+    uploadForm.addEventListener('submit', function(event) {
+        if (fileInput.files.length === 0) {
             event.preventDefault();
-            var form = document.getElementById('add-exams');
-            const form_data = new FormData(form);
+            alert('Please select a folder to upload!');
+        }
+        alert('Form is being submitted');
+        event.preventDefault();
+        var form = document.getElementById('add-exams');
+        const form_data = new FormData(form);
 
-            const files = form_data.getAll('examFolders');
-            let folderStructure = [];
+        const files = form_data.getAll('examFolders');
+        let folderStructure = [];
 
-            for (file of files) {
-                console.log(file);
-                folderStructure.push({name: file.name, path: file.webkitRelativePath});
+        for (let file of files) {
+            console.log(file);
+            folderStructure.push({name: file.name, path: file.webkitRelativePath});
+        }
+        console.log(folderStructure);
+        console.log(form_data.files);
+        form_data.append('folderStructure', JSON.stringify(folderStructure));
+        fetch(form.action, {
+            method: 'POST',
+            body: form_data,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
             }
-            console.log(folderStructure);
-            console.log(form_data.files);
-            form_data.append('folderStructure', JSON.stringify(folderStructure));
-            fetch(form.action, {
-                method: 'POST',
-                body: form_data,
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
-                }
-            });
         });
-    </script>
-    {% endblock %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    });
+});
+</script>
+
+{% endblock %}

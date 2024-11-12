@@ -1,0 +1,33 @@
+.back-link {
+    display: flex;
+    align-items: center;
+}
+
+.back-btn{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 20px;
+    padding-left: 7px;
+    border: none;
+    border-radius: 15px;
+    font-size: 14px;
+    font-weight: 500;
+    background-color: #4a5a89;
+    color: #eeeded;
+    cursor: pointer;
+}
+
+.back-btn:hover{
+    background-color: #262d40;
+    transition: background-color 0.3s;
+}
+
+.back-btn svg{
+    height: 20px;
+    width: 20px;
+}
+
+.back-btn svg path{
+    fill: #eeeded;
+}

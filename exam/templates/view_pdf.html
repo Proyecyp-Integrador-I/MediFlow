@@ -1,95 +1,94 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analysis</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .btn-spacing {
-            margin-bottom: 5px;
-            margin-top: 5px;
-        }
-    </style>
-</head>
-    <body>
-        {% extends 'base.html' %}
+{% extends 'base.html' %}
+{% load static %}
 
-        {% block title %}Analysis{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'styles/view_pdf.css' %}">
+<link rel="stylesheet" href="{% static 'styles/back_button.css' %}">
+{% endblock %}
 
-        {% block content %}
+{% block title %}Exam Analysis{% endblock %}
 
-        <div class="top border p-4 shadow-sm rounded mb-3" style="flex: 4;">
-            <h2 class="mb-4">Analyze exam {{ file.patient.name }} {{ file.patient.last_name }}-{{ file.exam_date}}</h2>
-            <p>Currently analyzing the exam of {{ file.patient.name }} {{ file.patient.last_name }}, {{ file.patient.identification }}</p>
-            <p>Age: {{ file.patient.age }}, gender: {{ file.patient.gender }}, date of birth: {{ file.patient.date_of_birth }}, health insurance: {{ file.patient.health_insurance }}</p>
-            <p>Exam date: {{ file.exam_date }}</p>
-        </div>
+{% block return %}
+<a href="{% url 'view_patients' %}" class="back-link">
+    <button class="back-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M7 12L15 4L17.2 6.1L11.3 12L17.2 17.9L15 20L7 12Z" fill="#1C2E45" fill-opacity="0.6"/>
+        </svg>
+        Back
+    </button>
+</a>
+{% endblock %}
 
-        <div class="container-fluid my-4 d-flex" style="width: 100%;">
-            {% if messages %}
-                {% for message in messages %}
-                    <p{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</p>
-                {% endfor %}
-            {% endif %}
-            
-            <div class="pdf-section me-4" style="flex: 3;">
-                <object data="{{ file.file.url }}" type="application/pdf" width="100%" height="800">
-                    <p>Your browser doesn't support the PDF visualization. You can download the file <a href="{{ file.file.url }}">here</a>.</p>
-                </object>
-            </div>
-            
-            <div class="right-section" style="flex: 2; display: flex; flex-direction: column;">
-                
-                <div class="middle border p-4 shadow-sm rounded mb-3" style="flex: 4;">
-                    <form method="post" id="save-analysis">
-                        {% csrf_token %}
-                        
-                        <label for="exam_type" class="form-label"><h3>Exam Type:</h3></label>
-                        <select name="exam_type" id="exam_type" class="form-select mb-3">
-                            <option value="segmento_anterior">Segmento Anterior</option>
-                            <option value="nervio_optico">Nervio Óptico</option>
-                        </select>
-                        
-                        <label for="result_analysis" class="form-label"><h3>Result Analysis:</h3></label>
-                        <textarea name="result_analysis" id="result_analysis" class="form-control" rows="20">{{ default_analysis }}{{ file.result_analysis }}</textarea>
-                        <button type="submit" class="btn btn-spacing" style="background-color: #6A80C1; color: white; border-radius: 20px; height: 50px; width: 100%; margin-top: 10px;">Save</button>
-                    </form>
-                    <a href="{% url 'download' file.id %}" class="btn btn-spacing" style="background-color: #6A80C1; color: white; border-radius: 20px; height: 50px; width: 100%; text-decoration: none; display: flex; align-items: center; justify-content: center;">Download file</a>
-                    <form action="{% url 'send_exam' file.pk %}" method="post" onsubmit="return confirm('Are you sure you want to send this exam?');">
-                        {% csrf_token %}
-                        <button class="btn btn-spacing" type="submit" style="background-color: #6A80C1; color: white; border-radius: 20px; height: 50px; width: 100%;">Send Email</button>
-                    </form>
-                    <form action="{% url 'next_exam' %}" method="post">
-                        {% csrf_token %}
-                        <button class="btn" type="submit" style="background-color: #6A80C1; color: white; border-radius: 20px; height: 50px; width: 100%; margin-top: 7px;">Next Exam</button>
-                    </form>
-                </div>
-            </div>
+{% block content %}
 
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    const exam_type = document.getElementById('exam_type');
-                    const analysis_text_area = document.getElementById('result_analysis');
+<h1>Exam Analysis</h1>
+<p>Currently analyzing the exam of <strong>{{ file.patient.name }} {{ file.patient.last_name }}</strong> with identification number <strong>{{ file.patient.identification }}</strong></p>
+<div class="patient-info">
+    <div><strong>Age:</strong><p>{{ file.patient.age }}</p></div>
+    <div><strong>Gender:</strong><p>{{ file.patient.gender }}</p></div>
+    <div><strong>Date of birth:</strong><p>{{ file.patient.date_of_birth }}</p></div>
+    <div><strong>Health insurance:</strong><p>{{ file.patient.health_insurance }}</p></div>
+    <div><strong>Date of test result:</strong><p>{{ file.exam_date }}</p></div>
+</div>
 
-                    const exam_type_variable = "{{ exam_types }}";
-                    const exam_types = JSON.parse("{{ exam_types|escapejs }}");
+<div class="content-wrapper">
+    <div class="pdf-container">
+        <object data="{{ file.file.url }}" type="application/pdf" width="100%" height="800">
+            <p>Your browser doesn't support the PDF visualization. You can download the file <a href="{{ file.file.url }}">here</a>.</p>
+        </object>
+    </div>
 
-                    var form = document.getElementById('save-analysis');
-                    const form_data = new FormData(form);
+    <div class="form-wrapper">
+        <form method="POST" id="save-analysis" class="form-container">
+            {% csrf_token %}
+            <label for="exam_type" class="form-label"><h3>Exam Type:</h3></label>
+            <select name="exam_type" id="exam_type" class="form-select">
+                <option value="segmento_anterior">Segmento Anterior</option>
+                <option value="nervio_optico">Nervio Óptico</option>
+            </select>
 
-                    exam_type.addEventListener('change', function() {
-                        for (let element in exam_types) {
-                            if (element === exam_type.value) {
-                                analysis_text_area.value = exam_types[element];
-                                form_data.append('save_analysis', exam_type.value);
-                            }
-                        }
-                    });
-                });
-            </script>
+            <label for="result_analysis" class="form-label"><h3>Test Result Analysis:</h3></label>
+            <textarea name="result_analysis" id="result_analysis" class="form-control" rows="20">{{ default_analysis }}{{ file.result_analysis }}</textarea>
 
-        {% endblock %}
-    </body>
-</html>
+            <button type="submit" class="btn">Save Analysis</button>
+        </form>
+
+        <a href="{% url 'download' file.id %}" class="form-container">
+            <button class="btn">Download Analyzed Exam</button>
+        </a>
+
+        <form action="{% url 'send_exam' file.pk %}" method="POST" onsubmit="return confirm('Are you sure you want to send this exam?');" class="form-container">
+            {% csrf_token %}
+            <button class="btn" type="submit">Send Analyzed Exam Via Email</button>
+        </form>
+
+        <form action="{% url 'next_exam' %}" method="POST" class="form-container">
+            {% csrf_token %}
+            <button class="btn" type="submit">Next Exam</button>
+        </form>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const exam_type = document.getElementById('exam_type');
+        const analysis_text_area = document.getElementById('result_analysis');
+
+        const exam_type_variable = "{{ exam_types }}";
+        const exam_types = JSON.parse("{{ exam_types|escapejs }}");
+
+        var form = document.getElementById('save-analysis');
+        const form_data = new FormData(form);
+
+        exam_type.addEventListener('change', function() {
+            for (let element in exam_types) {
+                if (element === exam_type.value) {
+                    analysis_text_area.value = exam_types[element];
+                    form_data.append('save_analysis', exam_type.value);
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
