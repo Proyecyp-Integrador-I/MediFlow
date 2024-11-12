@@ -180,6 +180,7 @@ def view_pdf(request, pk):
         form = UploadFileForm(instance=exam)
     return render(request, 'view_pdf.html', {'form': form, 'file': exam, 'exam_types':exam_types_json, default_analysis: default_analysis})
 
+@login_required
 def menu(request):
     return render(request, 'menu.html')
 
