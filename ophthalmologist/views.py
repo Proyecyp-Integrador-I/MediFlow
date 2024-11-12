@@ -54,8 +54,7 @@ def home(request):
 
 @login_required
 def about(request):
-    if request.method == 'POST':
-        return render(request, 'about.html')
+    return render(request, 'about.html')
 
 @login_required
 def search(request):
