@@ -19,12 +19,12 @@ def create_user(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('administrator')  
+            return redirect('administrator')
     else:
         form = CustomUserCreationForm()
 
     return render(request, 'user_create.html', {'form': form})
-    
+
 @user_passes_test(is_superuser_or_staff)
 def administrator(request):
     patients = Patient.objects.all()
