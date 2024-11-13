@@ -29,119 +29,143 @@
         <form id="add-exams" method="post" action='/exam/bulk-insertion' enctype="multipart/form-data">
             {% csrf_token %}
             
-            <!-- Upload Area (drag and drop) -->
-            <div class="upload-area" id="uploadArea">
+            <!-- Upload Area for folder (drag and drop) -->
+            <div class="upload-area" id="uploadAreaFolders">
                 <label for="examFolders">Drag and drop your folder here, or click to select folders</label>
                 <input class="custom-file-input" type="file" id="examFolders" name="examFolders" webkitdirectory multiple required>
-                <div id="fileName" class="file-name"></div>
+                <div id="fileNameFolder" class="file-name"></div>
             </div>
-
+    
             <h1>Or</h1>
             <p>Select CSV with programming.</p>
-
-            <!-- Select CSV file -->
-            <div class="upload-area" id="uploadArea">
-                <label for="exampatientCSV">Drag and drop your file here, or click to select files</label>
+    
+            <!-- Upload Area for CSV file -->
+            <div class="upload-area" id="uploadAreaCSV">
+                <label for="patientCSV">Drag and drop your file here, or click to select files</label>
                 <input class="custom-file-input" type="file" id="patientCSV" name="patientCSV" accept=".xlsx, .xls" multiple required>
-                <div id="fileName" class="file-name"></div>
+                <div id="fileNameCSV" class="file-name"></div>
             </div>
-
+    
             <!-- Submit Button -->
             <button type="submit" name="new_exams" class="upload-btn" id="uploadBtn" disabled>Upload</button>
         </form>
     </div>
 </div>
-
+    
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const uploadArea = document.getElementById('uploadArea');
-    const fileInput = document.getElementById('examFolders');
-    const fileNameDisplay = document.getElementById('fileName');
-    const uploadForm = document.getElementById('add-exams');
-    const uploadBtn = document.getElementById('uploadBtn');
-
-    // Click event to trigger file selection
-    uploadArea.addEventListener('click', function() {
-        fileInput.click();
-    });
-
-    // Drag over event to show dragover state
-    uploadArea.addEventListener('dragover', function(event) {
-        event.preventDefault();
-        uploadArea.classList.add('dragover');
-    });
-
-    // Drag leave event to remove dragover state
-    uploadArea.addEventListener('dragleave', function() {
-        uploadArea.classList.remove('dragover');
-    });
-
-    // Drop event to handle file drop
-    uploadArea.addEventListener('drop', function(event) {
-        event.preventDefault();
-        uploadArea.classList.remove('dragover');
+    document.addEventListener('DOMContentLoaded', function() {
+        const uploadAreaFolders = document.getElementById('uploadAreaFolders');
+        const fileInputFolders = document.getElementById('examFolders');
+        const fileNameDisplayFolder = document.getElementById('fileNameFolder');
         
-        const files = event.dataTransfer.files;
-        fileInput.files = files;
-        handleFileSelection(files);
-    });
-
-    // Change event for file input
-    fileInput.addEventListener('change', function() {
-        const files = fileInput.files;
-        handleFileSelection(files);
-    });
-
-    // Function to handle file selection and extract folder name
-    function handleFileSelection(files) {
-        if (files.length > 0) {
-            const folderName = getFolderName(files);
-            fileNameDisplay.textContent = `Selected folder: ${folderName}`;
-            uploadBtn.disabled = false;
-        } else {
-            fileNameDisplay.textContent = '';
-            uploadBtn.disabled = true;
-        }
-    }
-
-    // Function to extract folder name from webkitRelativePath
-    function getFolderName(files) {
-        const firstFilePath = files[0].webkitRelativePath;
-        const folderPath = firstFilePath.split('/').slice(0, -1).join('/');
-        const folderName = folderPath.split('/').pop(); // Get the last segment of the path
-        return folderName;
-    }
-
-    // Prevent form submission if no files are selected
-    uploadForm.addEventListener('submit', function(event) {
-        if (fileInput.files.length === 0) {
+        const uploadAreaCSV = document.getElementById('uploadAreaCSV');
+        const fileInputCSV = document.getElementById('patientCSV');
+        const fileNameDisplayCSV = document.getElementById('fileNameCSV');
+        
+        const uploadForm = document.getElementById('add-exams');
+        const uploadBtn = document.getElementById('uploadBtn');
+    
+        uploadAreaFolders.addEventListener('click', function() {
+            fileInputFolders.click();
+        });
+    
+        uploadAreaFolders.addEventListener('dragover', function(event) {
             event.preventDefault();
-            alert('Please select a folder to upload!');
-        }
-        alert('Form is being submitted');
-        event.preventDefault();
-        var form = document.getElementById('add-exams');
-        const form_data = new FormData(form);
-
-        const files = form_data.getAll('examFolders');
-        let folderStructure = [];
-
-        for (let file of files) {
-            console.log(file);
-            folderStructure.push({name: file.name, path: file.webkitRelativePath});
-        }
-        console.log(folderStructure);
-        console.log(form_data.files);
-        form_data.append('folderStructure', JSON.stringify(folderStructure));
-        fetch(form.action, {
-            method: 'POST',
-            body: form_data,
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}'
+            uploadAreaFolders.classList.add('dragover');
+        });
+    
+        uploadAreaFolders.addEventListener('dragleave', function() {
+            uploadAreaFolders.classList.remove('dragover');
+        });
+    
+        uploadAreaFolders.addEventListener('drop', function(event) {
+            event.preventDefault();
+            uploadAreaFolders.classList.remove('dragover');
+            
+            const files = event.dataTransfer.files;
+            fileInputFolders.files = files;
+            handleFileSelection(files, fileNameDisplayFolder);
+        });
+    
+        fileInputFolders.addEventListener('change', function() {
+            const files = fileInputFolders.files;
+            handleFileSelection(files, fileNameDisplayFolder);
+        });
+    
+        uploadAreaCSV.addEventListener('click', function() {
+            fileInputCSV.click();
+        });
+    
+        uploadAreaCSV.addEventListener('dragover', function(event) {
+            event.preventDefault();
+            uploadAreaCSV.classList.add('dragover');
+        });
+    
+        uploadAreaCSV.addEventListener('dragleave', function() {
+            uploadAreaCSV.classList.remove('dragover');
+        });
+    
+        uploadAreaCSV.addEventListener('drop', function(event) {
+            event.preventDefault();
+            uploadAreaCSV.classList.remove('dragover');
+            
+            const files = event.dataTransfer.files;
+            fileInputCSV.files = files;
+            handleFileSelection(files, fileNameDisplayCSV);
+        });
+    
+        fileInputCSV.addEventListener('change', function() {
+            const files = fileInputCSV.files;
+            handleFileSelection(files, fileNameDisplayCSV);
+        });
+    
+        function handleFileSelection(files, displayElement) {
+            if (files.length > 0) {
+                const fileName = files[0].name;
+                displayElement.textContent = `Selected file: ${fileName}`;
+                uploadBtn.disabled = false;
+            } else {
+                displayElement.textContent = '';
+                uploadBtn.disabled = true;
             }
+        }
+
+        uploadForm.addEventListener('submit', function(event) {
+            if (fileInputFolders.files.length === 0 && fileInputCSV.files.length === 0) {
+                event.preventDefault();
+                alert('Please select a folder or CSV file to upload!');
+            }
+    
+            event.preventDefault();
+            var form = document.getElementById('add-exams');
+            const form_data = new FormData(form);
+    
+            const filesFolders = form_data.getAll('examFolders');
+            let folderStructure = [];
+            for (let file of filesFolders) {
+                folderStructure.push({name: file.name, path: file.webkitRelativePath});
+            }
+
+            const filesCSV = form_data.getAll('patientCSV');
+            let csvFileNames = filesCSV.map(file => file.name);
+    
+            console.log("Folder structure:", folderStructure);
+            console.log("CSV files:", csvFileNames);
+    
+            form_data.append('folderStructure', JSON.stringify(folderStructure));
+            form_data.append('csvFiles', JSON.stringify(csvFileNames));
+    
+            fetch(form.action, {
+                method: 'POST',
+                body: form_data,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            }).then(response => response.json())
+              .then(data => console.log(data))
+              .catch(error => console.error('Error:', error));
         });
     });
-});
 </script>
 
 {% endblock %}

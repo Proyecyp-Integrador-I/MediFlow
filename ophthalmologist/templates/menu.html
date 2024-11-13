@@ -5,18 +5,9 @@
 <link rel="stylesheet" href="{% static 'styles/menu.css' %}">
 {% endblock %}
 
-{% block title %}Administrator - Menu{% endblock %}
+{% block title %}Menu{% endblock %}
 
 {% block content %}
-
-<!-- {% if request.user.is_staff %}
-{% else %}
-<li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'new_exam' %}">Upload Exam</a></li>
-<li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'new_patient' %}">Add Patient</a></li>
-<li class="nav-item text-body-secondary"><a href="{% url 'bulk_insertion' %}" class="nav-link">Bulk Insertion of Exams</a></li>
-<li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'patient_extraction' %}">Automated Patient Extraction</a></li>
-<li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
-{% endif %} -->
 
 {% if request.user.is_superuser %}
 <div class="module-wrapper">
@@ -65,7 +56,7 @@
             <path d="M17 11H15V13H13V15H15V17H17V15H19V13H17V11Z" fill="#1C2E45"/>
         </svg>
         <h1>
-            Upload Exam / Create Patient
+            Upload Exam
         </h1>
     </a>
 </div>
@@ -91,17 +82,6 @@
         <h1>
             Add Ophthalmologist
         </h1> 
-    </a>
-</div>
-
-<div class="module-wrapper">
-    <a href="{% url 'create_user' %}" class="module-container">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M11.9 4C6.3 4 9 11.3 9 11.3C9.6 12.3 10.4 12.1 10.4 12.8C10.4 13.4 9.7 13.6 9 13.7C7.9 13.7 6.9 13.5 5.9 15.3C5.3 16.4 5 20 5 20H18.7C18.7 20 18.4 16.4 17.9 15.3C16.9 13.4 15.9 13.7 14.8 13.6C14.1 13.5 13.4 13.3 13.4 12.7C13.4 12.1 14.2 12.3 14.8 11.2C14.8 11.3 17.5 4 11.9 4V4Z" fill="#1C2E45"/>
-        </svg>
-        <h1>
-            Create Administrator User
-        </h1>
     </a>
 </div>
 

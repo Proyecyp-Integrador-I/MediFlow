@@ -45,27 +45,27 @@
 </form>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('examFiles');
         const fileNameDisplay = document.getElementById('fileName');
         const uploadForm = document.getElementById('uploadForm');
         const uploadBtn = document.getElementById('uploadBtn');
         const fileMessage = document.getElementById('file-message');
-
+    
         uploadArea.addEventListener('click', function() {
             fileInput.click();
         });
-
+    
         uploadArea.addEventListener('dragover', function(event) {
             event.preventDefault();
             uploadArea.classList.add('dragover');
         });
-
+    
         uploadArea.addEventListener('dragleave', function() {
             uploadArea.classList.remove('dragover');
         });
-
+    
         uploadArea.addEventListener('drop', function(event) {
             event.preventDefault();
             uploadArea.classList.remove('dragover');
@@ -74,25 +74,25 @@ document.addEventListener('DOMContentLoaded', function() {
             fileInput.files = files;
             handleFileSelection(files);
         });
-
+    
         fileInput.addEventListener('change', function() {
             const files = fileInput.files;
             handleFileSelection(files);
         });
-
+    
         function handleFileSelection(files) {
             if (files.length > 0) {
                 const fileName = files[0].name;
                 fileNameDisplay.textContent = `Selected file: ${fileName}`;
-                fileMessage.style.display = 'block'; // Mostrar el mensaje de archivo cargado
+                fileMessage.style.display = 'block';
                 uploadBtn.disabled = false;
             } else {
                 fileNameDisplay.textContent = '';
-                fileMessage.style.display = 'none'; // Ocultar el mensaje
+                fileMessage.style.display = 'none';
                 uploadBtn.disabled = true;
             }
         }
-
+    
         uploadForm.addEventListener('submit', function(event) {
             if (fileInput.files.length === 0) {
                 event.preventDefault();
@@ -100,5 +100,5 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-</script>
+    </script>
 {% endblock %}

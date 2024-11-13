@@ -60,6 +60,7 @@ main{
 .btn{
     margin-top: 20px;
     justify-content: center;
+    padding: 6px 0;
 }
 
 .submit-btn{

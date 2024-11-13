@@ -43,6 +43,7 @@
             {% csrf_token %}
             <label for="exam_type" class="form-label"><h3>Exam Type:</h3></label>
             <select name="exam_type" id="exam_type" class="form-select">
+                <option value="" selected></option>
                 <option value="segmento_anterior">Segmento Anterior</option>
                 <option value="nervio_optico">Nervio Óptico</option>
             </select>
@@ -53,9 +54,16 @@
             <button type="submit" class="btn">Save Analysis</button>
         </form>
 
+        {% if file.is_analyzed %}
         <a href="{% url 'download' file.id %}" class="form-container">
             <button class="btn">Download Analyzed Exam</button>
         </a>
+
+        {% else %}
+        <a href="{% url 'download' file.id %}" class="form-container">
+            <button class="btn-disabled" disabled>Download Analyzed Exam</button>
+        </a>
+        {% endif %}
 
         <form action="{% url 'send_exam' file.pk %}" method="POST" onsubmit="return confirm('Are you sure you want to send this exam?');" class="form-container">
             {% csrf_token %}

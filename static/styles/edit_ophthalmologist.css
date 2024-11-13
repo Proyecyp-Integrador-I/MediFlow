@@ -14,13 +14,13 @@ main{
     box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.30);
     border: 1px solid rgb(197, 197, 197);
     border-radius: 20px;
-    padding-right: 40px;
     padding-bottom: 20px;
 }
 
 .form-container{
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
 
 .btn-container{
@@ -31,7 +31,8 @@ main{
 }
 
 .save-btn{
-    padding: 13px 100px;
+    width: 90%;
+    height: 35px;
     border-radius: 20px;
     border: none;
     background-color: #4a5a89;
@@ -47,12 +48,12 @@ main{
 form p {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     margin-bottom: 20px;
 }
 
 form p label {
-    width: 100%;
+    width: 90%;
     margin-bottom: 5px;
     text-align: left;
     font-weight: bold;
@@ -61,7 +62,7 @@ form p label {
 form p input,
 form p select,
 form p textarea {
-    width: 100%;
+    width: 90%;
     height: 25px;
     border-radius: 10px;
     border: 1px solid rgb(143, 143, 143);

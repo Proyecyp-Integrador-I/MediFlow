@@ -39,6 +39,10 @@ main, .form-container, .container{
     display: none;
 }
 
+.upload-area label {
+    cursor: pointer;
+}
+
 .upload-area .form-label {
     font-size: 18px;
     color: #333;

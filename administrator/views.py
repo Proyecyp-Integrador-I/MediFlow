@@ -99,7 +99,7 @@ def edit_ophthalmologist(request, medical_license):
     
     return render(request, 'edit_ophthalmologist.html', {'form': form})
 
-@user_passes_test(is_superuser_or_staff)
+@login_required
 def edit_patient(request, identification):
     patient = get_object_or_404(Patient, identification=identification)
     

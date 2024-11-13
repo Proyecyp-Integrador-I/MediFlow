@@ -18,7 +18,6 @@ main{
 }
 
 select{
-    font-family: "Roboto", sans-serif, "Arial";
     max-width: 500px;
     height: 30px;
     border-radius: 10px;

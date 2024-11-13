@@ -69,7 +69,6 @@ main{
 }
 
 select{
-    font-family: "Roboto", sans-serif, "Arial";
     width: 100%;
     max-width: 500px;
     height: 35px;
@@ -91,7 +90,7 @@ textarea{
     min-width: 60%;
     min-height: 500px;
     font-family: "Roboto", sans-serif, "Arial";
-    line-height: 19px;
+    line-height: 20px;
     border-radius: 8px;
 }
 
@@ -101,7 +100,7 @@ textarea:focus{
     box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
 }
 
-.btn{
+.btn, .btn-disabled{
     width: 50%;
     padding: 13px 10px;
     border-radius: 20px;
@@ -115,6 +114,12 @@ textarea:focus{
 .btn:hover{
     background-color: #262d40;
     transition: background-color 0.3s;
+}
+
+.btn-disabled{
+    cursor: not-allowed;
+    background-color: lightgray;
+    color: #0e0e0eec;
 }
 
 @media (max-width: 1490px){

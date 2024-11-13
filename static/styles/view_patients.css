@@ -145,18 +145,49 @@ tr:nth-child(even) td {
     fill-opacity: 1;
 }
 
-.btn-analysis{
+.actions {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.actions a{
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.edit-btn, .btn-analysis {
+    font-size: 15px;
     border: none;
     height: 29px;
     border-radius: 18px;
     color: #eeeded;
     cursor: pointer;
-    background-color: #4A5989;
-    padding: 8px 15px;
+    padding: 2px 15px;
     text-wrap: nowrap;
 }
 
-.btn-analysis:hover{
+.edit-btn {
+    background-color: #839DD1;
+}
+
+.edit-btn:hover {
+    background-color: #6a80c1;
+    transition: background-color 0.3s;
+}
+
+.btn-analysis {
+    background-color: #4A5989;
+}
+
+.btn-analysis:hover {
     background-color: #262d40;
     transition: background-color 0.3s;
 }

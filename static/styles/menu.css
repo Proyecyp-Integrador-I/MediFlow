@@ -18,10 +18,6 @@ main{
     box-shadow: 15px 15px 30px rgba(0, 0, 0, 0.4);
 }
 
-.module-wrapper:hover svg path {
-    fill: #0f0f0f;
-}
-
 .module-wrapper:hover h1 {
     background-color: #262d40;
 }
@@ -42,7 +38,12 @@ main{
 }
 
 .module-container svg path{
+    fill: #596ca9;
+}
+
+.module-wrapper:hover svg path {
     fill: #262d40;
+    /* fill: #0f0f0f; */
 }
 
 .module-container h1{

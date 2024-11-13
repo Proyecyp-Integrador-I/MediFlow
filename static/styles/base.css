@@ -1,5 +1,5 @@
 header, .logo-container, .logo,
-.logo-name, .user-container, footer,
+.logo-name, .user-container, footer, .footer-left,
 .user-logo, .body-container, .return
 {
     display: flex;
@@ -143,4 +143,40 @@ footer {
 
 .about:hover{
     color: #262d40;
+}
+
+@media(max-width: 500px){
+    footer{
+        flex-direction: column;
+        height: auto;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 30px 0;
+    }
+    .footer-rights, .footer-name,
+    .footer-rights p, .footer-name p {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    .footer-left{
+        margin-top: 30px;
+    }
+
+    .about{
+        margin-left: 10px;
+        margin-right: 0;
+    }
+}
+
+@media(max-width: 450px){
+    .logo-name{
+        display: none;
+    }
+}
+
+@media(max-width: 370px){
+    .user-name{
+        display: none;
+    }
 }
