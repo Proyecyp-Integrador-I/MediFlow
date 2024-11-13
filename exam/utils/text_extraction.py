@@ -48,7 +48,7 @@ def text_extraction(file_content):
             "exam_date": exam_date,
             "gender": gender
         }
-        
+
 def extract_multiple(files):
     extracted_data = {"id":set(), "name":set(), "last_name":set(), "birthdate":set(), "exam_date":set(), "gender":set()}
     for file in files:
@@ -71,7 +71,7 @@ def extract_multiple(files):
                 print(val)
     
     first_elements = {key: next(iter(value)) for key, value in extracted_data.items() if value}
-    #print(first_elements)
+    print(first_elements)
     return first_elements 
     #iterate through extracted data and where there is more than one value, compute levenshtein distance if very different, then add to list of errors
 

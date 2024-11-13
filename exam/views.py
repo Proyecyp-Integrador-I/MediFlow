@@ -61,7 +61,7 @@ def new_exam(request):
                     patient = Patient(name=name, last_name=last_name, identification=identification, age=age, gender=gender)
                 patient.save()
 
-            if birthdate != '':
+            if exam_date != '':
                 exam = Exam(patient=patient, exam_date=exam_date, file=files[0])            
             else:
                 exam = Exam(patient=patient, file=files[0])
@@ -151,63 +151,111 @@ def multiple_exams(request):
         form = UploadExamForm()
     return render(request, 'multiple_exams.html')
 
+# Takes a list of dictionaries that correspond to a filename and relative filepath and the InMemoryUploadedFile file objects
+# Creates a folder structure with the InMemoryUploadedFile file objects organized by patient folder
+def process_folder_structure(folder_structure, files):
+    patient_folders = {}
+    print(folder_structure)
+    for element in folder_structure:
+        print(len(folder_structure))
+        print(element)
+        folder = '/'.join(element['path'].split('/')[0:-1])
+        file = element['name']
+        print(folder, file)
+        uploaded_file = next((f for f in files if f.name == file), None)
+        print(folder, file, uploaded_file)
+
+        if folder not in patient_folders:
+            patient_folders[folder] = [uploaded_file]
+        else:
+            patient_folders[folder].append(uploaded_file)
+
+    return patient_folders
+
+def save_extracted_patient(patient_info):
+    if not patient_info.get('id'):
+        print("Patient info not found")
+        return False, patient_info
+    else:
+        patient = Patient.objects.filter(identification=patient_info['id']).first()
+        print("searching patient")
+        if not patient:
+            print("Patient not found")
+            patient = Patient(
+                    name=patient_info.get('name', None),
+                    last_name=patient_info.get('last_name', None),
+                    identification=patient_info.get('id', None), 
+                    age=calculate_age(patient_info.get('birthdate')) if patient_info.get('birthdate') else None,
+                    date_of_birth=patient_info.get('birthdate', None),
+                    gender=patient_info.get('gender', None)
+                )
+            patient.save()
+        else:
+            print("Patient found, editing")
+            patient.name = patient_info.get('name', patient.name)
+            patient.last_name = patient_info.get('last_name', patient.last_name)
+            patient.age = calculate_age(patient_info.get('birthdate')) if patient_info.get('birthdate') else patient.age
+            patient.date_of_birth = patient_info.get('birthdate', patient.date_of_birth)
+            patient.save()
+
+        return True, patient
+
+def save_extracted_exam(patient, patient_info, exam_path):
+    exam = Exam.objects.filter(patient=patient, file=exam_path).first()
+    if not exam:
+        exam = Exam(patient=patient, exam_date=patient_info['exam_date'], file=exam_path)
+        exam.save()
+    elif exam.exam_date != patient_info['exam_date']:
+        exam.exam_date = patient_info['exam_date']
+        exam.save()
+    return exam
+
+def get_new_exam_path(patient_info, folder):
+    
+    patient_folder_name = folder.split("/")[-1]
+    try:
+        exam_file_name = f"{patient_info['name']} {patient_info['last_name']} {patient_info['exam_date'].strftime('%Y-%m-%d')}.pdf"
+        exam_path = os.path.join(MEDIA_ROOT,"uploads", exam_file_name)
+    except:
+        # Case where no information was extracted
+        exam_file_name = f"{patient_folder_name}_{datetime.now().strftime('%Y-%m-%d')}.pdf"
+        exam_path = os.path.join(MEDIA_ROOT,"uploads", exam_file_name)
+    return exam_path
+
 @login_required
 def bulk_insertion(request):
     if request.method == 'POST':
+        print("RECIBI POST")
         files = request.FILES.getlist('examFolders')
         csv_file = request.FILES.get('patientCSV')
         folder_structure = request.POST.get('folderStructure')
-        csrf_token = get_token(request)
-        print(csrf_token)
+        # ophtalmologist = request.user.ophtalmologist
 
         folder_structure = json.loads(folder_structure)
-        patient_folders = {}
+        patient_folders = process_folder_structure(folder_structure, files)
 
-        for element in folder_structure:
-            
-            folder = '/'.join(element['path'].split('/')[0:-1])
-            file = element['path'].split('/')[-1]
-            uploaded_file = next((f for f in files if f.name == file), None)
-            print(folder, file, uploaded_file)
-
-            if folder not in patient_folders:
-                patient_folders[folder] = [uploaded_file]
-            else:
-                patient_folders[folder].append(uploaded_file)
-
-        print(patient_folders)
+        add_excel_info(csv_file)
         failed_patients = []
 
         for folder in patient_folders.keys():
             patient_info = extract_multiple(patient_folders[folder])
             print(patient_info)
-            exam_file_name = f"{patient_info['name']} {patient_info['last_name']} {patient_info['exam_date'].strftime('%Y-%m-%d')}.pdf"
-            exam_path = os.path.join(MEDIA_ROOT,"uploads", exam_file_name)
+
+            exam_path = get_new_exam_path(patient_info, folder)
+            concatenate_pdf(patient_folders[folder], exam_path)
+            # Change so that I can add multiple times and it overwrites the file
             if os.path.exists(exam_path):
                 print("File already exists")
-            else:
-                concatenate_pdf(patient_folders[folder], exam_path)
-                if not patient_info['id']:
-                    failed_patients.append(patient_info)
-                else:
-                    patient = Patient.objects.filter(identification=patient_info['id']).first()
-                    if not patient:
-                        patient = Patient(
-                                name=patient_info.get('name', None),
-                                last_name=patient_info.get('last_name', None),
-                                identification=patient_info.get('id', None), 
-                                age=calculate_age(patient_info.get('birthdate')) if patient_info.get('birthdate') else None,
-                                date_of_birth=patient_info.get('birthdate', None),
-                                gender=patient_info.get('gender', None)
-                            )
-                        patient.save()
-                    exam = Exam(patient=patient, exam_date=patient_info['exam_date'], file=exam_path)
-                    exam.save()
-                    print(exam)
-        
-        #add_excel_info(csv_file)
 
-        print(failed_patients)
+            success, patient = save_extracted_patient(patient_info)
+            
+            if not success:
+                failed_patients.append(patient_info)
+            else:
+                print("save exam")
+                exam = save_extracted_exam(patient, patient_info, exam_path)
+
+        print("fdieogwengortnmgortkgm")
         return redirect("home") # Redirigir a una página de éxito
     return render(request, 'bulk_insertion.html')
 
