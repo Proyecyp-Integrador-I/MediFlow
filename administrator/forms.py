@@ -38,7 +38,7 @@ class AddOphthalmologistForm(forms.ModelForm):
             )
             
             # Generar la contraseña (por ejemplo, basada en nombre y apellido)
-            raw_password = f"{ophthalmologist.name}{ophthalmologist.last_name}".lower()
+            raw_password = f"{ophthalmologist.name}{ophthalmologist.last_name}".replace(" ", "").lower()
             
             # Guardar la contraseña de manera segura
             user.set_password(raw_password)
