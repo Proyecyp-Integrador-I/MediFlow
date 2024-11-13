@@ -26,7 +26,7 @@
     <p>Upload a folder where each subfolder has a patient with their exams in PDF format.</p>
     
     <div class="form-container">
-        <form id="add-exams" method="post" action='/exam/bulk-insertion' enctype="multipart/form-data">
+        <form id="add-exams" method="post" action="bulk-insertion" enctype="multipart/form-data">
             {% csrf_token %}
             
             <!-- Upload Area for folder (drag and drop) -->
@@ -159,12 +159,21 @@
                 method: 'POST',
                 body: form_data,
                 headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
+                'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                if (data.status === 'success') {
+                    // Redirigir al usuario a la página de menú
+                    window.location.href = data.redirect_url;
+                } else {
+                    // Mostrar un error o mensaje
+                    alert("Hubo un error al procesar los archivos.");
                 }
-            }).then(response => response.json())
-              .then(data => console.log(data))
-              .catch(error => console.error('Error:', error));
-        });
+                })
+                .catch(error =>console.error('Error:', error));
+            });
     });
 </script>
 

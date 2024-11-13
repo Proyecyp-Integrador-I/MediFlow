@@ -24,6 +24,8 @@ from ophthalmologist.views import menu
 
 from django.middleware.csrf import get_token
 
+from django.http import JsonResponse
+
 MEDIA_ROOT = settings.MEDIA_ROOT
 
 # Create your views here.
@@ -240,7 +242,7 @@ def bulk_insertion(request):
                 exam = save_extracted_exam(patient, patient_info, exam_path)
 
         print("fdieogwengortnmgortkgm")
-        return redirect("menu") # Redirigir a una página de éxito
+        return JsonResponse({'status': 'success', 'redirect_url': '/'}) # Redirigir a una página de éxito
 
     return render(request, 'bulk_insertion.html')
 
