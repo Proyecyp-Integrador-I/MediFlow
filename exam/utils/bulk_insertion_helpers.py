@@ -1,24 +1,11 @@
-from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
-from .forms import * # Importación de los formularios
-from .models import Exam, Patient
-from django.conf import settings
-from django.contrib import messages
-from .forms import UploadExamForm # Importación de los formularios
-from exam.utils.generate_analysis import generate_analysis_pdf
-from exam.utils.send_email import send_email
-from exam.utils.text_extraction import text_extraction, extract_multiple, concatenate_pdf, add_excel_info
+from exam.models import Exam, Patient
 from exam.utils.calculate_age import calculate_age
-from PyPDF2 import PdfReader, PdfWriter
-import os
-import json
 from datetime import datetime
-from django.contrib.auth.decorators import login_required
+import os
 
-from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 
-
-from django.middleware.csrf import get_token
+MEDIA_ROOT = settings.MEDIA_ROOT
 
 
 # Takes a list of dictionaries that correspond to a filename and relative filepath and the InMemoryUploadedFile file objects

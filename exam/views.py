@@ -19,6 +19,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 
+from ophthalmologist.views import menu
+
 
 from django.middleware.csrf import get_token
 
@@ -223,13 +225,14 @@ def bulk_insertion(request):
             print(patient_info)
 
             exam_path = get_new_exam_path(patient_info, folder)
-            concatenate_pdf(patient_folders[folder], exam_path)
-            # Change so that I can add multiple times and it overwrites the file
+
             if os.path.exists(exam_path):
                 print("File already exists")
+            concatenate_pdf(patient_folders[folder], exam_path)
+            # Change so that I can add multiple times and it overwrites the file
 
             success, patient = save_extracted_patient(patient_info)
-            
+
             if not success:
                 failed_patients.append(patient_info)
             else:
@@ -238,6 +241,7 @@ def bulk_insertion(request):
 
         print("fdieogwengortnmgortkgm")
         return redirect("menu") # Redirigir a una página de éxito
+
     return render(request, 'bulk_insertion.html')
 
 
