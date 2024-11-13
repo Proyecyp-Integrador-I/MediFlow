@@ -91,7 +91,7 @@ def new_exam(request):
                         )
                 patient.save()
 
-            if birthdate != '':
+            if exam_date != '':
                 exam = Exam(patient=patient, exam_date=exam_date, file=files[0])            
             else:
                 exam = Exam(patient=patient, file=files[0])
