@@ -237,7 +237,7 @@ def bulk_insertion(request):
                 exam = save_extracted_exam(patient, patient_info, exam_path)
 
         print("fdieogwengortnmgortkgm")
-        return redirect("home") # Redirigir a una página de éxito
+        return redirect("menu") # Redirigir a una página de éxito
     return render(request, 'bulk_insertion.html')
 
 
