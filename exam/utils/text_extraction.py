@@ -110,8 +110,6 @@ def add_excel_info(file_content):
         health_insurance=row['Entidad'].strip()
         
         existing_patient = Patient.objects.filter(identification=identification).exists()
-        print("he")
-        print(existing_patient)
 
         if not existing_patient:
             name=row['Nombre del paciente']
