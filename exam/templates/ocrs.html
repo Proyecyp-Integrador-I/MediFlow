@@ -1,0 +1,5 @@
+{% for exam in exams %}
+    <a href="{% url "ocr" exam.id %}"><p>{{ exam.id }}</p></a>
+{% empty %}
+    <p>No exams found.</p>
+{% endfor %}

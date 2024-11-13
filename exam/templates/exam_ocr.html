@@ -1,0 +1,8 @@
+<h2>OCR Results</h2>
+<ul>
+    {% for item in ocr_txt %}
+        <li>
+            <strong>{{ item.label }}</strong>: {{ item.value }}
+        </li>
+    {% endfor %}
+</ul>
