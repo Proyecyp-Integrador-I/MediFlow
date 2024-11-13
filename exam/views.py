@@ -1,17 +1,27 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from .forms import * # Importación de los formularios
 from .models import Exam, Patient
+from ophthalmologist.models import Ophthalmologist
 from django.conf import settings
 from django.contrib import messages
 from .forms import UploadExamForm # Importación de los formularios
 from exam.utils.generate_analysis import generate_analysis_pdf
 from exam.utils.send_email import send_email
-from exam.utils.text_extraction import text_extraction
+from exam.utils.text_extraction import text_extraction, extract_multiple, concatenate_pdf, add_excel_info
 from exam.utils.calculate_age import calculate_age
 from PyPDF2 import PdfReader, PdfWriter
 import os
+import json
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
+
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+
+
+from django.middleware.csrf import get_token
+
+MEDIA_ROOT = settings.MEDIA_ROOT
 
 # Create your views here.
 @login_required
@@ -41,15 +51,50 @@ def new_exam(request):
                 age = calculate_age(birthdate)
             else:
                 age = None
+
+            ophthalmologists = Ophthalmologist.objects.all()
             
             existing_patient = Patient.objects.filter(identification=identification).first()
             if existing_patient:
                 patient = existing_patient
             else:
-                patient = Patient(name=name, last_name=last_name, identification=identification, age=age, date_of_birth=birthdate, gender=gender)
+                doctor_id = request.POST.get('doctor')
+                doctor = Ophthalmologist.objects.get(id=doctor_id) if doctor_id else None
+                email=request.POST.get('patient_email', ""),
+                address=request.POST.get('patient_address', ""),
+                phone=request.POST.get('patient_phone', "")
+
+                if birthdate != '':
+                    patient = Patient(
+                        name=name, 
+                        last_name=last_name, 
+                        identification=identification, 
+                        age=age, 
+                        date_of_birth=birthdate, 
+                        gender=gender, 
+                        doctor=doctor,
+                        email=email,
+                        address=address,
+                        phone=phone
+                        )
+                else:
+                    patient = Patient(
+                        name=name, 
+                        last_name=last_name, 
+                        identification=identification, 
+                        age=age,
+                        gender=gender, 
+                        doctor=doctor,
+                        email=email,
+                        address=address,
+                        phone=phone
+                        )
                 patient.save()
 
-            exam = Exam(patient=patient, exam_date=exam_date, file=files[0])
+            if birthdate != '':
+                exam = Exam(patient=patient, exam_date=exam_date, file=files[0])            
+            else:
+                exam = Exam(patient=patient, file=files[0])
             exam.save()
 
             exam_new  = exam
@@ -61,7 +106,11 @@ def new_exam(request):
                 "identification": patient.identification,
                 "age": patient.age,
                 "date_of_birth": patient.date_of_birth.isoformat() if patient.date_of_birth else None,
-                "gender": patient.gender
+                "gender": patient.gender,
+                "doctor": patient.doctor.id if patient.doctor else None,
+                "email": patient.email,
+                "address": patient.address,
+                "phone": patient.phone,
             }
 
             exam_data = {
@@ -83,7 +132,7 @@ def new_exam(request):
             print(request.session['patient_data'])
             print(request.session.get('patient_data'))
 
-            return render(request, 'exam_form_valid.html', {'patient': patient_new, 'exam': exam_new})
+            return render(request, 'exam_form_valid.html', {'patient': patient_new, 'exam': exam_new, 'ophthalmologists': ophthalmologists})
 
         elif 'validate_exam' in request.POST:
 
@@ -98,16 +147,21 @@ def new_exam(request):
 
             if identification == '':
                 messages.error(request, 'Identification is required')
-                return render(request, 'exam_form_valid.html', {'patient': old_patient, 'exam': old_exam})
+                return render(request, 'exam_form_valid.html', {'patient': old_patient, 'exam': old_exam, 'ophthalmologists': ophthalmologists})
             elif Patient.objects.filter(identification=identification).exists():
                 print("Patient exists")
                 messages.error(request, 'Identification already exists')
-                return render(request, 'exam_form_valid.html', {'patient': old_patient, 'exam': old_exam})
+                return render(request, 'exam_form_valid.html', {'patient': old_patient, 'exam': old_exam, 'ophthalmologists': ophthalmologists})
 
             date_of_birth = request.POST.get('patient_DOB', old_patient["date_of_birth"])
             age = request.POST.get('patient_age', old_patient["age"])
             gender = request.POST.get('patient_gender', old_patient["gender"])
             health_insurance = request.POST.get('patient_health', "")
+            email=request.POST.get('patient_email', "")
+            address=request.POST.get('patient_address', "")
+            phone=request.POST.get('patient_phone', "")
+            doctor_id = request.POST.get('doctor')
+            doctor = Ophthalmologist.objects.get(id=doctor_id) if doctor_id else None
 
             date = request.POST.get('exam_date', old_exam["date"])
 
@@ -115,13 +169,25 @@ def new_exam(request):
             file = old_exam["file"]
             apparatus = request.POST.get('apparatus', "")
 
-            patient = Patient(name=name, last_name=last_name, identification=identification, age=age, date_of_birth=date_of_birth, gender=gender, health_insurance=health_insurance)
+            patient = Patient(
+                name=name, 
+                last_name=last_name, 
+                identification=identification, 
+                age=age, 
+                date_of_birth=date_of_birth, 
+                gender=gender, 
+                health_insurance=health_insurance,
+                email=email,
+                address=address,
+                phone=phone,
+                doctor=doctor
+                )
             patient.save()
             exam = Exam(patient=patient, exam_date=date, file=file, exam_type=exam_type, apparatus=apparatus)
             exam.save()
             print(exam.file.url)
 
-            return redirect('home')
+            return redirect('menu')
     return render(request, 'new_exam.html')
 
 
@@ -131,10 +197,70 @@ def multiple_exams(request):
         patient_list = request.FILES.get('patient_list')
         if form.is_valid():
             form.save()
-            return redirect("home") # Redirigir a una página de éxito
+            return redirect("menu") # Redirigir a una página de éxito
     else:
         form = UploadExamForm()
     return render(request, 'multiple_exams.html')
+
+@login_required
+def bulk_insertion(request):
+    if request.method == 'POST':
+        files = request.FILES.getlist('examFolders')
+        csv_file = request.FILES.get('patientCSV')
+        folder_structure = request.POST.get('folderStructure')
+        csrf_token = get_token(request)
+        print(csrf_token)
+
+        folder_structure = json.loads(folder_structure)
+        patient_folders = {}
+
+        for element in folder_structure:
+            
+            folder = '/'.join(element['path'].split('/')[0:-1])
+            file = element['path'].split('/')[-1]
+            uploaded_file = next((f for f in files if f.name == file), None)
+            print(folder, file, uploaded_file)
+
+            if folder not in patient_folders:
+                patient_folders[folder] = [uploaded_file]
+            else:
+                patient_folders[folder].append(uploaded_file)
+
+        print(patient_folders)
+        failed_patients = []
+
+        for folder in patient_folders.keys():
+            patient_info = extract_multiple(patient_folders[folder])
+            print(patient_info)
+            exam_file_name = f"{patient_info['name']} {patient_info['last_name']} {patient_info['exam_date'].strftime('%Y-%m-%d')}.pdf"
+            exam_path = os.path.join(MEDIA_ROOT,"uploads", exam_file_name)
+            if os.path.exists(exam_path):
+                print("File already exists")
+            else:
+                concatenate_pdf(patient_folders[folder], exam_path)
+                if not patient_info['id']:
+                    failed_patients.append(patient_info)
+                else:
+                    patient = Patient.objects.filter(identification=patient_info['id']).first()
+                    if not patient:
+                        patient = Patient(
+                                name=patient_info.get('name', None),
+                                last_name=patient_info.get('last_name', None),
+                                identification=patient_info.get('id', None), 
+                                age=calculate_age(patient_info.get('birthdate')) if patient_info.get('birthdate') else None,
+                                date_of_birth=patient_info.get('birthdate', None),
+                                gender=patient_info.get('gender', None)
+                            )
+                        patient.save()
+                    exam = Exam(patient=patient, exam_date=patient_info['exam_date'], file=exam_path)
+                    exam.save()
+                    print(exam)
+        
+        #add_excel_info(csv_file)
+
+        print(failed_patients)
+        return redirect("menu") # Redirigir a una página de éxito
+    return render(request, 'bulk_insertion.html')
 
 @login_required
 def download(request, path):
@@ -143,8 +269,10 @@ def download(request, path):
     exam.is_analyzed = True
     exam.analysis_date = datetime.now()
     patient = exam.patient
-    file_path = f'media/{exam.exam_type}_{patient.name}_{patient.last_name}.pdf'
-    generate_analysis_pdf(exam, patient, file_path)
+    exam_date = exam.exam_date.strftime('%d/%m/%Y')
+    
+    file_path = f'media/{exam.exam_type}_{patient.name}_{patient.last_name}_{exam.exam_date}.pdf'
+    generate_analysis_pdf(exam, patient, file_path, patient.doctor)
 
     exam.save()
 

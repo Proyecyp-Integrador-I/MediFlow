@@ -2,7 +2,11 @@ from fpdf import FPDF
 import pypdfium2 as pdfium
 from ophthalmologist.models import Ophthalmologist
 
-def generate_analysis_pdf(exam, patient, output_file, doctor=Ophthalmologist(name="Martha Luz", last_name="Zuluaga Posada", email="johndoe@example.com", medical_license="RM-5-1382-97", specialty="Oftalmólogo y Corneólogo CES"), logo="media/logo_clinica.png"):
+"""
+doctor=Ophthalmologist(name="Martha Luz", last_name="Zuluaga Posada", email="johndoe@example.com", medical_license="RM-5-1382-97", specialty="Oftalmólogo y Corneólogo CES")
+"""
+
+def generate_analysis_pdf(exam, patient, output_file, doctor, logo="media/clinic_information/logo_clinica.png"):
     class PDF(FPDF):
         def header(self):
             self.image(logo, 10, 8, 33)
@@ -81,7 +85,7 @@ def generate_analysis_pdf(exam, patient, output_file, doctor=Ophthalmologist(nam
 
     # Doctor information
     pdf.set_font(style=pdf_data["style"],size=pdf_data["subtitle_size"])
-    pdf.cell(w=0, text=doctor.name,  align="L")
+    pdf.cell(w=0, text=str(doctor),  align="L")
     pdf.ln(5)
     pdf.cell(w=0, text=doctor.medical_license, align="L")
     pdf.ln(5)

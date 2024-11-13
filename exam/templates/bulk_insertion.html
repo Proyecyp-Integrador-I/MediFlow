@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'styles/bulk_exam.css' %}">
+<link rel="stylesheet" href="{% static 'styles/back_button.css' %}">
+<link rel="stylesheet" href="{% static 'styles/modal.css' %}">
+{% endblock %}
+
+{% block title %}Upload Multiple New Exams{% endblock %}
+
+{% block return %}
+<a href="{% url 'menu' %}" class="back-link">
+    <button class="back-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M7 12L15 4L17.2 6.1L11.3 12L17.2 17.9L15 20L7 12Z" fill="#1C2E45" fill-opacity="0.6"/>
+        </svg>
+        Back
+    </button>
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Upload Multiple Exams</h1>
+    <p>Upload a folder where each subfolder has a patient with their exams in PDF format.</p>
+    
+    <div class="form-container">
+        <form id="add-exams" method="post" action='/exam/bulk-insertion' enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Upload Area for folder (drag and drop) -->
+            <div class="upload-area" id="uploadAreaFolders">
+                <label for="examFolders">Drag and drop your folder here, or click to select folders</label>
+                <input class="custom-file-input" type="file" id="examFolders" name="examFolders" webkitdirectory multiple required>
+                <div id="fileNameFolder" class="file-name"></div>
+            </div>
+    
+            <h1>Or</h1>
+            <p>Select CSV with programming.</p>
+    
+            <!-- Upload Area for CSV file -->
+            <div class="upload-area" id="uploadAreaCSV">
+                <label for="patientCSV">Drag and drop your file here, or click to select files</label>
+                <input class="custom-file-input" type="file" id="patientCSV" name="patientCSV" accept=".xlsx, .xls" multiple required>
+                <div id="fileNameCSV" class="file-name"></div>
+            </div>
+    
+            <!-- Submit Button -->
+            <button type="submit" name="new_exams" class="upload-btn" id="uploadBtn" disabled>Upload</button>
+        </form>
+    </div>
+</div>
+    
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const uploadAreaFolders = document.getElementById('uploadAreaFolders');
+        const fileInputFolders = document.getElementById('examFolders');
+        const fileNameDisplayFolder = document.getElementById('fileNameFolder');
+        
+        const uploadAreaCSV = document.getElementById('uploadAreaCSV');
+        const fileInputCSV = document.getElementById('patientCSV');
+        const fileNameDisplayCSV = document.getElementById('fileNameCSV');
+        
+        const uploadForm = document.getElementById('add-exams');
+        const uploadBtn = document.getElementById('uploadBtn');
+    
+        uploadAreaFolders.addEventListener('click', function() {
+            fileInputFolders.click();
+        });
+    
+        uploadAreaFolders.addEventListener('dragover', function(event) {
+            event.preventDefault();
+            uploadAreaFolders.classList.add('dragover');
+        });
+    
+        uploadAreaFolders.addEventListener('dragleave', function() {
+            uploadAreaFolders.classList.remove('dragover');
+        });
+    
+        uploadAreaFolders.addEventListener('drop', function(event) {
+            event.preventDefault();
+            uploadAreaFolders.classList.remove('dragover');
+            
+            const files = event.dataTransfer.files;
+            fileInputFolders.files = files;
+            handleFileSelection(files, fileNameDisplayFolder);
+        });
+    
+        fileInputFolders.addEventListener('change', function() {
+            const files = fileInputFolders.files;
+            handleFileSelection(files, fileNameDisplayFolder);
+        });
+    
+        uploadAreaCSV.addEventListener('click', function() {
+            fileInputCSV.click();
+        });
+    
+        uploadAreaCSV.addEventListener('dragover', function(event) {
+            event.preventDefault();
+            uploadAreaCSV.classList.add('dragover');
+        });
+    
+        uploadAreaCSV.addEventListener('dragleave', function() {
+            uploadAreaCSV.classList.remove('dragover');
+        });
+    
+        uploadAreaCSV.addEventListener('drop', function(event) {
+            event.preventDefault();
+            uploadAreaCSV.classList.remove('dragover');
+            
+            const files = event.dataTransfer.files;
+            fileInputCSV.files = files;
+            handleFileSelection(files, fileNameDisplayCSV);
+        });
+    
+        fileInputCSV.addEventListener('change', function() {
+            const files = fileInputCSV.files;
+            handleFileSelection(files, fileNameDisplayCSV);
+        });
+    
+        function handleFileSelection(files, displayElement) {
+            if (files.length > 0) {
+                const fileName = files[0].name;
+                displayElement.textContent = `Selected file: ${fileName}`;
+                uploadBtn.disabled = false;
+            } else {
+                displayElement.textContent = '';
+                uploadBtn.disabled = true;
+            }
+        }
+
+        uploadForm.addEventListener('submit', function(event) {
+            if (fileInputFolders.files.length === 0 && fileInputCSV.files.length === 0) {
+                event.preventDefault();
+                alert('Please select a folder or CSV file to upload!');
+            }
+    
+            event.preventDefault();
+            var form = document.getElementById('add-exams');
+            const form_data = new FormData(form);
+    
+            const filesFolders = form_data.getAll('examFolders');
+            let folderStructure = [];
+            for (let file of filesFolders) {
+                folderStructure.push({name: file.name, path: file.webkitRelativePath});
+            }
+
+            const filesCSV = form_data.getAll('patientCSV');
+            let csvFileNames = filesCSV.map(file => file.name);
+    
+            console.log("Folder structure:", folderStructure);
+            console.log("CSV files:", csvFileNames);
+    
+            form_data.append('folderStructure', JSON.stringify(folderStructure));
+            form_data.append('csvFiles', JSON.stringify(csvFileNames));
+    
+            fetch(form.action, {
+                method: 'POST',
+                body: form_data,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            }).then(response => response.json())
+              .then(data => console.log(data))
+              .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
+
+{% endblock %}

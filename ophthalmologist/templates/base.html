@@ -1,86 +1,67 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-        }
-        body {
-            display: flex;
-            flex-direction: column;
-            background-color: #F8F9FA;
-            position: relative;
-        }
-        main {
-            flex: 1;
-        }
-        .header-footer {
-            background-color: #D3E3F2;
-        }
-        .company-name {
-            color: #262D40;
-            font-weight: bold;
-        }
-        .navbar {
-            color: #262D40;
-        }
-        .custom-collapse {
-            position: absolute;
-            top: 65px;
-            left: 0;
-            z-index: 1030;
-            max-width: 300px;
-            border: 1px solid #D3E3F2;
-            border-radius: 3px;
-            display: none;
-        }
-        .custom-collapse.show {
-            display: block;
-        }
-        .bg-light {
-            padding: 10px;
-            border-radius: 5px;
-        }
-        li {
-            list-style: none;
-            padding: 0;
-            margin-bottom: 10px;
-        }
-        .nav-item {
-            padding: 10px 0;
-            margin: 0;
-            border-bottom: 1px solid #D3D3D3;
-        }
-        .nav-item:last-child {
-            border-bottom: none;
-        }
-    </style>
-    <title>{% block title %}MediFlow{% endblock %}</title>
+    <link rel="icon" href="/static/logo/logo_app.png" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'styles/base.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    {% block styles %}{% endblock %}
+    <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
-    <header class="header-footer py-3">
-        <div class="container-fluid d-flex justify-content-between align-items-center">
-            <nav class="navbar">
-                <div class="container-fluid">
-                    <button class="navbar-toggler" type="button" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
+    <div class="body-container">
+        <header>
+            <div class="return">
+                {% block return %}{% endblock %}
+            </div>
+
+            <a href="{% url 'menu' %}">
+                <div class="logo-container">
+                    <div class="logo">
+                        <img src="/media/logo_app.png" alt="Logo MediFlow" id="logo">
+                    </div>
+            
+                    <div class="logo-name">
+                        <p>MediFlow</p>
+                    </div>
                 </div>
-            </nav>
-
-            <div class="logo">
-                <a href="{% url 'home' %}" style="text-decoration: none;"><img src="/media/logo_app.png" alt="Logo MediFlow" class="img-fluid" style="height: 50px;">
-                <span class="company-name h5 ms-2">MediFlow</span></a>
+            </a>
+            
+            <div class="user-container" id="userContainer">
+                <div class="user-logo">
+                    <p>{{ request.user.get_initial }}</p>
+                </div>
+                <div class="user-name">
+                    <p>{{ request.user.get_full_name }}</p>
+                </div>
             </div>
+        </header>
+    
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
 
-            <div class="usuario d-flex align-items-center">
-                <img src="/media/user_logo.png" alt="Profile" style="height: 30px;">
-                <span class="ms-2">{{ request.user.get_full_name }}</span>
+        <div class="user-dropdown" id="userDropdown">
+            <ul>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </div>
+    
+        <footer>
+            <div class="footer-left">
+                <div class="footer-rights">
+                    <p class="mb-0">All rights reserved</p>
+                </div>
+                <div class="footer-name">
+                    <p>MediFlow ©</p>
+                </div>
             </div>
+<<<<<<< HEAD
         </div>
     </header>
 
@@ -102,41 +83,34 @@
                 <li class="nav-item text-body-secondary"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
             {% endif %}
         </div>
+=======
+            <a class="about" href="{% url 'about' %}">
+                <p>About MediFlow</p>
+            </a>
+        </footer>
+>>>>>>> 4c62fdb67493e2a621c685c3bb28689a2ab65cbe
     </div>
 
-    <main class="container my-4">
-        {% block content %}
-        {% endblock %}
-    </main>
-
-    <footer class="header-footer py-3">
-        <div class="container-fluid">
-            <p class="mb-0">All rights reserved <strong>MediFlow ©</strong></p>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const toggleButton = document.querySelector('.navbar-toggler');
-        const collapseMenu = document.getElementById('navbarToggleExternalContent');
-
-        toggleButton.addEventListener('click', function() {
-            const isVisible = collapseMenu.classList.toggle('show');
-            const rect = this.getBoundingClientRect();
-            collapseMenu.style.top = `${rect.bottom + 5}px`; // Ajustar 5px más abajo
-            collapseMenu.style.left = `${rect.left}px`;
-
-            // Aseguramos que el menú no tenga un retraso
-            collapseMenu.style.display = isVisible ? 'block' : 'none';
-        });
-
-        // Cerrar el menú si se hace clic fuera de él
-        document.addEventListener('click', function(event) {
-            if (!toggleButton.contains(event.target) && !collapseMenu.contains(event.target)) {
-                collapseMenu.classList.remove('show');
-                collapseMenu.style.display = 'none';
-            }
+        document.addEventListener('DOMContentLoaded', function() {
+            const userContainer = document.getElementById('userContainer');
+            const userDropdown = document.getElementById('userDropdown');
+        
+            userContainer.addEventListener('click', function(event) {
+                event.stopPropagation();
+                
+                if (userDropdown.style.display === 'block') {
+                    userDropdown.style.display = 'none';
+                } else {
+                    userDropdown.style.display = 'block';
+                }
+            });
+        
+            window.addEventListener('click', function(event) {
+                if (!userContainer.contains(event.target)) {
+                    userDropdown.style.display = 'none';
+                }
+            });
         });
     </script>
 </body>

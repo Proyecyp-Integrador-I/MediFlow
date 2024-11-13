@@ -48,3 +48,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def has_module_perms(self, app_label):
         return self.is_superuser
+    
+    def get_initial(self):
+        return self.first_name[0]

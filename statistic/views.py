@@ -23,20 +23,41 @@ def visualizeStatistics(request):
 
 def createStatistics(x_param, y_param, x_label, y_label, graph_type):
     plt.rcParams['font.family'] = 'sans-serif'
-    plt.rcParams['font.sans-serif'] = ['Helvetica', 'Arial']
+    plt.rcParams['font.sans-serif'] = ['Arial']
+    plt.rcParams['font.weight'] = 'normal'
     plt.figure(figsize=(10, 6))
     if graph_type == 'bar':
-        plt.bar(x_param, y_param, color='#262d40')
-        plt.xlabel(x_label)
-        plt.ylabel(y_label)
+        bar_width = 0.6
+        num_bars = len(x_param)
+        plt.bar(x_param, y_param, color='#262d40', width=bar_width)
+        plt.xlabel(x_label, fontweight='normal')
+        plt.ylabel(y_label, fontweight='normal')
         plt.xticks()
         plt.ylim(0, None)
         plt.yticks(range(0, max(y_param) + 1))
+        if num_bars <= 3:
+            plt.bar([0], y_param, color='#262d40', width=bar_width)
+            plt.xlim(-3, 3)
         ax = plt.gca()
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
     elif graph_type == 'pie':
-        wedges, texts, autotexts = plt.pie(y_param, autopct='%1.1f%%', colors=['#262d40', '#6A80C1'], startangle=90)
+        total = sum(y_param)
+        
+        if total == y_param[0]:
+            autotexts = [None for _ in x_param]
+        else:
+            autotexts = ['%1.1f%%' % (val / total * 100) for val in y_param]
+
+        wedges, texts, autotexts = plt.pie(y_param, autopct='%1.1f%%', colors=['#262d40', '#6A80C1'], startangle=90,
+                                           wedgeprops={'edgecolor': 'black'}, 
+                                           textprops={'color': 'white'},
+                                           labels=x_param)
+
+        for i, autotext in enumerate(autotexts):
+            if autotext is None:
+                texts[i].set_text('')
+
         plt.axis('equal')
         plt.legend(wedges, x_param, title="Genders", loc="center left", bbox_to_anchor=(1, 0, 0.5, 1), fontsize=10, title_fontsize='13')
         

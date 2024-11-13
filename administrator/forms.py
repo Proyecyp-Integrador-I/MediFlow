@@ -52,9 +52,23 @@ class EditOphthalmologistForm(forms.ModelForm):
         fields = ['name', 'last_name', 'email', 'medical_license', 'specialty']
 
 class EditPatientForm(forms.ModelForm):
+    gender = forms.ChoiceField(
+        choices=[('Male', 'Male'), ('Female', 'Female')],
+        widget=forms.Select(),
+    )
+
+    # Definimos el campo 'doctor' como un ModelChoiceField
+    doctor = forms.ModelChoiceField(
+        queryset=Ophthalmologist.objects.all(),
+        widget=forms.Select(),
+        empty_label="Choose an ophthalmologist"
+    )
+
     class Meta:
         model = Patient
-        fields = ['identification', 'name', 'last_name', 'email', 'phone', 'date_of_birth', 'gender', 'address', 'health_insurance']
+        fields = ['identification', 'name', 'last_name', 'email', 'phone', 'date_of_birth', 'gender', 'address', 'health_insurance', 'doctor']
         widgets = {
-            'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
+            'date_of_birth': forms.DateInput(attrs={'type': 'date'}),  # Esto es para el campo de fecha de nacimiento
+            'gender': forms.Select(),  # Esto es para el campo de género, que ahora ya está en ChoiceField
+            'doctor': forms.Select(),  # Selección de oftalmólogo
         }
