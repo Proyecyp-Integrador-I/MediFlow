@@ -11,9 +11,5 @@ urlpatterns = [
     path('login/', ophthalmologistViews.login_view, name='login'),
     path('logout/', ophthalmologistViews.logout_view, name='logout'),
     path('search/', ophthalmologistViews.search, name="search"),
-<<<<<<< HEAD
     path('about/', ophthalmologistViews.about, name="about"),
-=======
-    path('about/', ophthalmologistViews.about, name='about')
->>>>>>> 4c62fdb67493e2a621c685c3bb28689a2ab65cbe
 ]

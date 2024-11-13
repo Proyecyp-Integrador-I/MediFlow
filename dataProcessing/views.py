@@ -1,10 +1,12 @@
 import os
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
 
 from .ocr import process_pdf
 from exam.models import Exam
 
+@login_required
 def ocr_view(request, id):
     import re
 
@@ -35,6 +37,7 @@ def ocr_view(request, id):
 
     return render(request, 'exam_ocr.html', {'ocr_txt': structured_results})
 
+@login_required
 def ocrs(request):
     exams = Exam.objects.all()
     return render(request, 'ocrs.html', {'exams': exams})

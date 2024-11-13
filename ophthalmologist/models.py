@@ -25,5 +25,8 @@ class Patient(models.Model):
     health_insurance = models.CharField(max_length=50)
     doctor = models.ForeignKey(Ophthalmologist, on_delete=models.CASCADE, null=True, blank=True)
 
+    def full_name(self):
+        return f"{self.name} {self.last_name}"
+
     def __str__(self):
         return f"{self.name} {self.last_name} {self.identification}"

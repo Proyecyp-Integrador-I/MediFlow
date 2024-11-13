@@ -1,5 +1,21 @@
-{% for exam in exams %}
-    <a href="{% url "ocr" exam.id %}"><p>{{ exam.id }}</p></a>
-{% empty %}
-    <p>No exams found.</p>
-{% endfor %}
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}OCR data processing - MediFlow{% endblock title %}
+
+{% block content %}
+    {% for exam in exams %}
+    <div class="">
+        <h1>{{ exam.patient.full_name }}</h1>
+        <h2>{{ exam.patient.identification }}</h2>
+        <a href="{% url "ocr" exam.id %}">
+            <button class="">
+                <p>Procesar informarción</p>
+            </button>
+        </a>
+    </div>
+    {% empty %}
+        <p>No exams found.</p>
+    {% endfor %}
+{% endblock content %}

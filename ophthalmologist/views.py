@@ -51,21 +51,8 @@ def logout_view(request):
 def view_patients(request):
     if request.user.is_superuser:
         return redirect('administrator')
-<<<<<<< HEAD
-    files = Exam.objects.all() # Filter by user
-    return render(request, 'home.html', {'files':files})
-
-@login_required
-def about(request):
-    return render(request, 'about.html')
-
-@login_required
-def search(request):
-    searchTerm = request.GET.get('searchPatient', '')
-=======
     
     searchPatient = request.GET.get('searchPatient', '')
->>>>>>> 4c62fdb67493e2a621c685c3bb28689a2ab65cbe
     try:
         doctor = request.user.ophthalmologist
     except AttributeError:

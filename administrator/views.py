@@ -20,11 +20,7 @@ def create_user(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-<<<<<<< HEAD
-            return redirect('administrator')
-=======
             return redirect('menu')  
->>>>>>> 4c62fdb67493e2a621c685c3bb28689a2ab65cbe
     else:
         form = CustomUserCreationForm()
 
