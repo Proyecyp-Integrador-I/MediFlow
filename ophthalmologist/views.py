@@ -59,8 +59,6 @@ def view_patients(request):
         doctor = None
 
     if doctor:
-        print(request.user)  # Esto debería mostrar el objeto CustomUser
-        print(type(request.user))
         patients = search(searchPatient, doctor)
     else:
         patients = []
