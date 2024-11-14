@@ -12,4 +12,5 @@ urlpatterns = [
     path('logout/', ophthalmologistViews.logout_view, name='logout'),
     path('search/', ophthalmologistViews.search, name="search"),
     path('about/', ophthalmologistViews.about, name="about"),
+    path('tutorial/', ophthalmologistViews.tutorial, name="tutorial"),
 ]

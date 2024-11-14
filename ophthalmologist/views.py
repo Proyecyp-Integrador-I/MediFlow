@@ -184,3 +184,6 @@ def menu(request):
 
 def about(request):
     return render(request, 'about.html')
+
+def tutorial(request):
+    return render(request, 'tutorial.html')
