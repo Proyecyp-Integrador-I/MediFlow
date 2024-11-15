@@ -235,15 +235,14 @@ def bulk_insertion(request):
 
             success, patient = save_extracted_patient(patient_info)
 
-            if request.user.is_authenticated and hasattr(request.user, 'ophthalmologist'):
-                ophthalmologist = request.user.ophthalmologist
-                patient = Patient.objects.filter(id=patient).first()
-                patient.doctor = ophthalmologist
-                patient.save()
-
             if not success:
                 failed_patients.append(patient_info)
             else:
+                if request.user.is_authenticated and hasattr(request.user, 'ophthalmologist'):
+                    ophthalmologist = request.user.ophthalmologist
+                    patient = Patient.objects.filter(id=patient).first()
+                    patient.doctor = ophthalmologist
+                    patient.save()
                 print("save exam")
                 exam = save_extracted_exam(patient, patient_info, exam_path)
 
