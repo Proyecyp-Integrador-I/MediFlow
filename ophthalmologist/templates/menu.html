@@ -2,7 +2,11 @@
 {% load static %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'styles/menu.css' %}">
+{% if request.user.is_superuser %}
+<link rel="stylesheet" href="{% static 'styles/menu-admin.css' %}">
+{% else %}
+<link rel="stylesheet" href="{% static 'styles/menu-opht.css' %}">
+{% endif %}
 {% endblock %}
 
 {% block title %}Menu{% endblock %}
@@ -10,6 +14,7 @@
 {% block content %}
 
 {% if request.user.is_superuser %}
+
 <div class="module-wrapper">
     <a href="{% url 'administrator' %}" class="module-container">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -28,26 +33,6 @@
         </h1>
     </a>
 </div>
-{% else %}
-<div class="module-wrapper">
-    <a href="{% url 'view_patients' %}" class="module-container">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M4 4H8V8H4V4Z" fill="#1C2E45"/>
-            <path d="M4 10H8V14H4V10Z" fill="#1C2E45"/>
-            <path d="M4 16H8V20H4V16Z" fill="#1C2E45"/>
-            <path d="M10 4H14V8H10V4Z" fill="#1C2E45"/>
-            <path d="M10 10H14V14H10V10Z" fill="#1C2E45"/>
-            <path d="M10 16H14V20H10V16Z" fill="#1C2E45"/>
-            <path d="M16 4H20V8H16V4Z" fill="#1C2E45"/>
-            <path d="M16 10H20V14H16V10Z" fill="#1C2E45"/>
-            <path d="M16 16H20V20H16V16Z" fill="#1C2E45"/>
-        </svg>
-        <h1>
-            Visualize Patients
-        </h1>
-    </a>
-</div>
-{% endif %}
 
 <div class="module-wrapper">
     <a href="{% url 'new_exam' %}" class="module-container">
@@ -72,7 +57,6 @@
     </a>
 </div>
 
-{% if request.user.is_superuser %}
 <div class="module-wrapper">
     <a href="{% url 'new_ophthalmologist' %}" class="module-container">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -111,6 +95,51 @@
             Statistics
         </h1>
     </a>
+</div>
+    
+{% else %}
+<div class="opht-menu-container">
+    <div class="module-wrapper">
+        <a href="{% url 'view_patients' %}" class="module-container">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M4 4H8V8H4V4Z" fill="#1C2E45"/>
+                <path d="M4 10H8V14H4V10Z" fill="#1C2E45"/>
+                <path d="M4 16H8V20H4V16Z" fill="#1C2E45"/>
+                <path d="M10 4H14V8H10V4Z" fill="#1C2E45"/>
+                <path d="M10 10H14V14H10V10Z" fill="#1C2E45"/>
+                <path d="M10 16H14V20H10V16Z" fill="#1C2E45"/>
+                <path d="M16 4H20V8H16V4Z" fill="#1C2E45"/>
+                <path d="M16 10H20V14H16V10Z" fill="#1C2E45"/>
+                <path d="M16 16H20V20H16V16Z" fill="#1C2E45"/>
+            </svg>
+            <h1>
+                Visualize Patients
+            </h1>
+        </a>
+    </div>
+    
+    <div class="module-wrapper">
+        <a href="{% url 'new_exam' %}" class="module-container">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M16 19H6V5H12V9H16V10H17V8L13 4H5V20H17V18H16V19ZM13 5L16 8H13V5Z" fill="#1C2E45"/>
+                <path d="M17 11H15V13H13V15H15V17H17V15H19V13H17V11Z" fill="#1C2E45"/>
+            </svg>
+            <h1>
+                Upload Exam
+            </h1>
+        </a>
+    </div>
+    
+    <div class="module-wrapper">
+        <a href="{% url 'bulk_insertion' %}" class="module-container">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="23" viewBox="0 0 24 23" fill="none">
+                <path d="M17 7H14L11 4H4V17H10V20H20V10L17 7ZM11 5L13 7H11V5ZM5 16V5H10V8H13V16H5ZM19 19H11V17H14V8H16V11H19V19ZM17 10V8L19 10H17Z" fill="#1C2E45"/>
+            </svg> 
+            <h1>
+                Bulk Insertion of Exams
+            </h1>
+        </a>
+    </div>
 </div>
 {% endif %}
 
