@@ -240,7 +240,6 @@ def bulk_insertion(request):
             else:
                 if request.user.is_authenticated and hasattr(request.user, 'ophthalmologist'):
                     ophthalmologist = request.user.ophthalmologist
-                    patient = Patient.objects.filter(id=patient).first()
                     patient.doctor = ophthalmologist
                     patient.save()
                 print("save exam")
