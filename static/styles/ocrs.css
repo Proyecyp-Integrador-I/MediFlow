@@ -1,0 +1,103 @@
+main{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.container, .container-result{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 300px;
+    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.30);
+    border: 1px solid rgb(197, 197, 197);
+    border-radius: 20px;
+    padding-bottom: 20px;
+}
+
+.container{
+    height: 290px;
+}
+
+.patient-name, .patient-id{
+    width: 100%;
+    padding-left: 20%;
+}
+
+.patient-name p, .patient-id p{
+    font-size: 18px;
+}
+
+.patient-id h1{
+    margin-top: 0;
+}
+
+a{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn{
+    width: 90%;
+    height: 35px;
+    border-radius: 20px;
+    border: none;
+    background-color: #4a5a89;
+    color: #eeeded;
+    cursor: pointer;
+}
+
+.btn:hover{
+    background-color: #262d40;
+    transition: background-color 0.3s;
+}
+
+.btn p{
+    margin: 0;
+}
+
+.user-container{
+    width: 150px;
+    text-wrap: nowrap;
+}
+
+footer{
+    justify-content: space-between;
+}
+
+.footer-rights{
+    margin-left: 10px;
+    text-wrap: nowrap;
+}
+
+.footer-name{
+    align-self: flex-end;
+    margin-left: 5px;
+    font-weight: 500;
+    text-wrap: nowrap;
+}
+
+.tutorial{
+    margin-right: 44px;
+    width: 60px;
+}
+
+.tutorial p{
+    width: 100%;
+}
+
+.about{
+    display: flex;
+    justify-content: flex-end;
+    text-align: right;
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+.about:hover{
+    color: #262d40;
+}

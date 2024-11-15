@@ -1,116 +1,113 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Uploaded Exam</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        input {
-            border-radius: 10px;
-            border: 1px solid gray;
-            width: 100%; 
-        }
-        .form-wrapper {
-            border: 1px solid gray; 
-            padding: 20px; 
-            border-radius: 10px; 
-            background-color: white;
-        }
-        .btn-validate {
-            background-color: #6A80C1 !important;
-            color: white;
-            border-radius: 20px;
-            height: 50px;
-            width: 100%; 
-        }
-    </style>
-</head>
-<body>
-    {% extends 'base.html' %}
+{% extends 'base.html' %}
+{% load static %}
 
-    {% block title %}Verify Uploaded Exam{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'styles/valid_exam.css' %}">
+<link rel="stylesheet" href="{% static 'styles/back_button.css' %}">
+{% endblock %}
 
-    {% block content %}
-    <div class="container my-4 d-flex flex-column align-items-center">
-        {% if messages %}
-            <ul class="messages mb-3">
-                {% for message in messages %}
-                    <li{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-        <h1 class="h3 mb-4 text-center">Verify Uploaded Exam</h1>
-        <p>Verify the uploaded exam before saving it.</p>
+{% block title %}Uploaded Exam{% endblock %}
+
+{% block return %}
+<a href="{% url 'new_exam' %}" class="back-link">
+    <button class="back-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M7 12L15 4L17.2 6.1L11.3 12L17.2 17.9L15 20L7 12Z" fill="#1C2E45" fill-opacity="0.6"/>
+        </svg>
+        Back
+    </button>
+</a>
+{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+<div class="messages alert-{{ message.tags }}">
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<h1>Exam Uploaded Successfully!</h1>
+<p>The patient's information has been automatically extracted from the file.</p>
+<p>Please verify the accuracy of the data and add any missing information before saving.</p>
+
+<div class="content-wrapper">
+    <div class="pdf-container">
         <object data="{{ exam.file.url }}" type="application/pdf" width="100%" height="800">
             <p>Your browser doesn't support the PDF visualization. You can download the file <a href="{{ exam.file.url }}">here</a>.</p>
         </object>
-        
-        <div class="form-wrapper mt-4 w-100">
-            <form method="post">
-                {% csrf_token %}
-                <div class="row">
-                    <div class="col-md-6">
-                        <h2 class="h4">Patient Data</h2>
-                        <div class="mb-3">
-                            <label for="patientID" class="form-label">ID</label>
-                            <input type="text" class="form-control" id="patientID" name="patient_id" value="{{ patient.identification }}" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="patientName" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="patientName" name="patient_name" value="{{ patient.name }}" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="patientLastName" class="form-label">Last Name</label>
-                            <input type="text" class="form-control" id="patientLastName" name="patient_last_name" value="{{ patient.last_name }}" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="patientDOB" class="form-label">Date of Birth</label>
-                            <input type="date" class="form-control" id="patientDOB" name="patient_DOB" value="{{ patient.date_of_birth|date:'Y-m-d' }}" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="patientAge" class="form-label">Age</label>
-                            <input type="number" class="form-control" id="patientAge" name="patient_age" value="{{ patient.age }}" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="patientGender" class="form-label">Gender</label>
-                            <select class="form-select" id="patientGender" name="patient_gender" required>
-                                <option value="Male" {% if patient.gender == 'Male' or patient.gender == 'Masculino' %}selected{% endif %}>Male</option>
-                                <option value="Female" {% if patient.gender == 'Female' or patient.gender == 'Femenino' %}selected{% endif %}>Female</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="patientHealth" class="form-label">Health Insurance</label>
-                            <input type="text" class="form-control" id="patientHealth" name="patient_health" value="{{ patient.health_insurance }}">
-                        </div>
-                        <input type="hidden" class="form-control" id="patient" name="patient" value="{{ patient }}" required readonly>
-                    </div>
-
-                    <div class="col-md-6">
-                        <h2 class="h4">Exam Data</h2>
-                        <div class="mb-3">
-                            <label for="examType" class="form-label">Exam Type</label>
-                            <input type="text" class="form-control" id="examType" name="exam_type" value="{{ exam.exam_type }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="apparatus" class="form-label">Apparatus</label>
-                            <input type="text" class="form-control" id="apparatus" name="apparatus" value="{{ exam.apparatus }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="examDate" class="form-label">Date</label>
-                            <input type="date" class="form-control" id="examDate" name="exam_date" value="{{ exam.exam_date|date:'Y-m-d' }}" required>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-4">
-                    <button type="submit" name="validate_exam" class="btn btn-validate">Validate Exam</button>
-                </div>
-            </form>
-        </div>
     </div>
-    {% endblock %}
+    
+    <div class="form-wrapper">
+        <form method="POST" class="form-container">
+            {% csrf_token %}
+            <h2>Patient Data</h2>
+            <div class="patient-data">
+                <label for="patientID" class="form-label">ID</label>
+                <input type="text" class="form-control" id="patientID" name="patient_id" value="{{ patient.identification }}" required>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+                <label for="patientName" class="form-label">Name</label>
+                <input type="text" class="form-control" id="patientName" name="patient_name" value="{{ patient.name }}" required>
+
+                <label for="patientLastName" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="patientLastName" name="patient_last_name" value="{{ patient.last_name }}" required>
+
+                <label for="patientDOB" class="form-label">Date of Birth</label>
+                <input type="date" class="form-control" id="patientDOB" name="patient_DOB" value="{{ patient.date_of_birth|date:'Y-m-d' }}" required>
+
+                <label for="patientAge" class="form-label">Age</label>
+                <input type="number" class="form-control" id="patientAge" name="patient_age" value="{{ patient.age }}" required>
+                
+                <label for="patientGender" class="form-label">Gender</label>
+                <select class="form-select" id="patientGender" name="patient_gender" required>
+                    <option value="Male" {% if patient.gender == 'Male' or patient.gender == 'Masculino' %}selected{% endif %}>Male</option>
+                    <option value="Female" {% if patient.gender == 'Female' or patient.gender == 'Femenino' %}selected{% endif %}>Female</option>
+                </select>
+
+                <label for="patientHealth" class="form-label">Health Insurance</label>
+                <input type="text" class="form-control" id="patientHealth" name="patient_health" value="{{ patient.health_insurance }}">
+
+                <label for="patientEmail" class="form-label">Email</label>
+                <input type="email" class="form-control" id="patientEmail" name="patient_email">
+    
+                <label for="patientAddress" class="form-label">Address</label>
+                <input type="text" class="form-control" id="patientAddress" name="patient_address">
+    
+                <label for="patientPhone" class="form-label">Phone</label>
+                <input type="text" class="form-control" id="patientPhone" name="patient_phone">
+
+                <label for="doctor" class="form-label">Select Doctor</label>
+                <select class="form-select" id="doctor" name="doctor" required>
+                    {% for doctor in ophthalmologists %}
+                        <option value="{{ doctor.id }}" {% if doctor.id == patient.doctor.id %}selected{% endif %}>{{ doctor.name }} {{ doctor.last_name }}</option>
+                    {% endfor %}
+                </select>
+
+                <input type="hidden" class="form-control" id="patient" name="patient" value="{{ patient }}" required readonly>
+            </div>
+
+            <h2>Exam Data</h2>
+            <div class="exam-data">
+                <label for="examType" class="form-label">Exam Type</label>
+                <input type="text" class="form-control" id="examType" name="exam_type" value="{{ exam.exam_type }}">
+
+                <label for="apparatus" class="form-label">Apparatus</label>
+                <input type="text" class="form-control" id="apparatus" name="apparatus" value="{{ exam.apparatus }}">
+
+                <label for="examDate" class="form-label">Date</label>
+                <input type="date" class="form-control" id="examDate" name="exam_date" value="{{ exam.exam_date|date:'Y-m-d' }}" required>
+            </div>
+
+            <div class="btn-container">
+                <button type="submit" name="validate_exam" class="save-btn">Validate Exam</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}
